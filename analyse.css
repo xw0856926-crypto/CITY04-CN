@@ -1,0 +1,446 @@
+@font-face {
+  font-family: "Noto Sans SC";
+  src: url("assets/fonts/NotoSansSC-VF.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+body{
+  margin:0;
+  background:#000000;
+  overflow:hidden;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-weight: 400;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+.stage{
+  position:relative;
+  width:1440px;
+  height:1024px;
+  margin:auto;
+}
+
+.analyse-bg{
+  position:absolute;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+/* 左侧 */
+.voice-area{
+  position:absolute;
+  left:120px;
+  top:180px;
+  display:flex;
+  flex-direction:column;
+  gap:50px;
+  z-index:10;
+}
+
+.voice-slot{
+  position: relative;        /* 保留 */
+  width: 520px;
+  height: 165px;
+}
+
+/* 图片充满 slot */
+.voice-slot img{
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+}
+
+/* ✅ 单独微调：位置用 translate */
+.voice-slot.v1{ width: 453px; height: 187px; transform: translate(-12px,-50px); }
+.voice-slot.v2{ width: 453px; height: 187px; transform: translate(-12px,-85px); }
+.voice-slot.v3{ width: 453px; height: 187px; transform: translate(-12px,-120px); }
+
+/* 右侧 */
+.drop-zone{
+  position:absolute;
+  left:760px;
+  top:200px;
+  width:560px;
+  height:260px;
+  z-index:10;
+}
+
+#dropDisplay{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+
+
+#dropDisplay{ display:none; }  /* 默认不显示卡片 */
+#dropDisplay.is-on{ display:block; }
+
+.drop-zone{ position:relative; } /* 确保 hint/图片可叠加 */
+
+/* 波浪线 */
+.wave-wrap{ overflow: visible; }
+.wave{
+  position:absolute;
+
+  /* ✅ 往左挪、往上一点点（你后面再微调这两行） */
+  left: -46%;
+  top: 62%;
+
+  transform: translate(-50%, -50%);
+
+  /* ✅ 缩小整体尺寸（峰值更集中更明显） */
+  width: 520px;
+  height: 160px;
+
+  opacity: 0;
+  pointer-events:none;
+}
+
+.wave.active{ opacity: 1; }
+
+/* 把 Figma 导出的 fill 路径强制变成 stroke 线条 */
+#wave path{
+  fill: none !important;
+  stroke: #A1FCFE;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-miterlimit: 1;
+  shape-rendering: geometricPrecision;
+}
+
+#wave1{ opacity: 0.40; }
+#wave2{ opacity: 1.00; }
+#wave3{ opacity: 0.80; }
+
+/* 让 SVG 波浪线更平滑：圆角端点 + 圆角连接 */
+#wave path{
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke; /* 缩放时线宽不乱跳 */
+}
+
+#dropDisplay{
+  position: absolute;
+  left: -95px;   /* ← 改这里：左右 */
+  top: 28px;    /* ← 改这里：上下 */
+
+  width: 659px;  /* ← 改这里：大小 */
+  height: auto;
+
+  display: none;
+}
+
+.drop-zone{
+  position:absolute;
+  left:662px;
+  top:218px;
+  width:661px;
+  height:275px;
+  z-index:10;
+}
+
+/* ✅ 右侧凹槽：默认显示 */
+.right-slot{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+  pointer-events:none;
+}
+
+/* 提示文字 */
+.drop-hint{
+  position:absolute;
+  left:51%;
+  top:53%;
+  transform:translate(-50%,-50%);
+  text-align:center;
+
+  width: 480px;
+  line-height: 1.4;
+
+  color: rgba(4,0,30,1);
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-weight: 400;
+  font-size: 22px;
+
+  text-shadow: 2px 2px 2px rgba(0,0,0,0.25);
+
+  pointer-events:none;
+}
+
+/* 卡片默认不显示 */
+#dropDisplay{
+  position:absolute;
+  /* 你已经调好的位置/大小就放这里 */
+  left: 5px;
+  top: 8px;
+  width: 659px;
+  height: auto;
+
+  display:none;
+}
+
+#dropDisplay.is-on{ display:block; }
+
+/* ✅ 扫描线：默认隐藏，分析时显示并上下移动 */
+.scan-line{
+  position: absolute;
+  left: -90%;
+  width: 84%;
+
+  height: 3px;                 /* 线粗细 */
+  top: 18%;                    /* 初始位置（会被动画覆盖） */
+
+  opacity: 0;
+  pointer-events: none;
+  z-index: 20;
+
+  /* 发光线：中心亮 + 两侧柔光 */
+  background: linear-gradient(90deg,
+    rgba(255,0,255,0.2) 0%,
+    rgba(234,52,247,0.9) 30%,
+    rgba(234,52,247,1) 50%,
+    rgba(234,52,247,0.9) 70%,
+    rgba(255,0,255,0.2) 100%
+  );
+
+  box-shadow:
+    0 0 10px rgba(255, 0, 255, 0.55),
+    0 0 22px rgba(255, 0, 255, 0.35);
+
+  /* 让线更“像光束” */
+  filter: blur(0.2px);
+}
+
+/* 分析中开启 */
+.scan-line.active{
+  opacity: 1;
+  animation: scanMove 1.6s linear infinite;
+}
+
+/* ✅ 在 dropZone 内上下扫：你可以调 22%~72% 这两个值 */
+@keyframes scanMove{
+  0%   { top: -75%; opacity: 0.15; }
+  10%  { opacity: 0.9; }
+  50%  { top: 5%; opacity: 0.9; }
+  90%  { opacity: 0.9; }
+  100% { top: -75%; opacity: 0.15; }
+}
+
+.analyse-status{
+  position: absolute;
+  left: -94%;      /* ✅ 微调左右 */
+  top: 24%;      /* ✅ 微调上下（在下方分析区左上角附近） */
+
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-weight: 600;        /* SemiBold*/
+  font-size: 24px;
+  letter-spacing: 0px;
+
+  color: rgba(255, 255, 255, 0.9);
+  
+  opacity: 0;              /* 默认隐藏 */
+  pointer-events: none;
+  z-index: 30;
+}
+
+.analyse-status.active{
+  opacity: 1;
+}
+
+/* ✅ OUTCOME 文本区域（右侧下方） */
+.outcome-box{
+  position: absolute;
+
+  /* 这三个是你要微调的位置/大小 */
+  left: -82%;
+  top: 42%;
+  width: 68%;
+
+  pointer-events: none;
+  z-index: 50;
+
+  opacity: 0;              /* 默认隐藏 */
+}
+
+.outcome-box.is-on{
+  opacity: 1;
+}
+
+.outcome-text{
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 1.55;
+  letter-spacing: 0px;
+  color: rgba(255,255,255,1);
+
+  max-width: 520px; /* 让换行像图里 */
+}
+
+/* ---------- 场景切换：横向撕裂 + 抖动 ---------- */
+
+body.scene-tear-transition {
+  animation: sceneShake 0.09s steps(2, end) infinite;
+  overflow: hidden;
+}
+
+.tear-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.03) 0px,
+      rgba(255,255,255,0.03) 1px,
+      rgba(0,0,0,0) 2px,
+      rgba(0,0,0,0) 6px
+    );
+  mix-blend-mode: screen;
+}
+
+.tear-slice {
+  position: absolute;
+  left: -8%;
+  width: 116%;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(122,0,0,0.18) 0%,
+      rgba(255,255,255,0.08) 48%,
+      rgba(40,74,75,0.18) 100%
+    );
+  opacity: 0.85;
+  animation: tearSliceShift var(--tear-duration) steps(2, end) infinite;
+  animation-delay: var(--tear-delay);
+  filter: blur(0.4px);
+}
+
+.tear-slice::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,0.18),
+      rgba(255,255,255,0.03),
+      rgba(255,255,255,0.18)
+    );
+  opacity: 0.5;
+}
+
+@keyframes tearSliceShift {
+  0% {
+    transform: translateX(0);
+    opacity: 0.25;
+  }
+  20% {
+    transform: translateX(calc(var(--tear-shift) * 0.35));
+    opacity: 0.95;
+  }
+  45% {
+    transform: translateX(var(--tear-shift));
+    opacity: 0.7;
+  }
+  70% {
+    transform: translateX(calc(var(--tear-shift) * -0.45));
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 0.3;
+  }
+}
+
+@keyframes sceneShake {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-3px, 1px); }
+  40%  { transform: translate(3px, -2px); }
+  60%  { transform: translate(-2px, 2px); }
+  80%  { transform: translate(2px, -1px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ---------- 最后一瞬间：闪黑 + 白噪点 ---------- */
+
+.scene-blackout-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  background: #000;
+  pointer-events: none;
+  animation: blackoutFlash 0.22s steps(2, end) forwards;
+}
+
+.scene-noise-flash {
+  position: absolute;
+  inset: 0;
+  opacity: 0.22;
+  background-image:
+    radial-gradient(rgba(255,255,255,0.9) 0.7px, transparent 0.8px),
+    radial-gradient(rgba(255,255,255,0.55) 0.5px, transparent 0.7px);
+  background-size: 7px 7px, 11px 11px;
+  background-position: 0 0, 3px 5px;
+  mix-blend-mode: screen;
+  animation:
+    noiseFlashFlicker 0.08s steps(2, end) infinite,
+    noiseFlashMove 0.12s steps(2, end) infinite;
+}
+
+@keyframes blackoutFlash {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.92;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes noiseFlashFlicker {
+  0% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.28;
+  }
+  100% {
+    opacity: 0.16;
+  }
+}
+
+@keyframes noiseFlashMove {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-6px, 3px);
+  }
+  50% {
+    transform: translate(5px, -4px);
+  }
+  75% {
+    transform: translate(-3px, 5px);
+  }
+  100% {
+    transform: translate(2px, -2px);
+  }
+}

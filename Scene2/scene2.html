@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scene2</title>
+  <link rel="stylesheet" href="./scene2.css" />
+</head>
+<body>
+  <div class="viewport">
+    <div class="stage" id="stage">
+
+      <!-- task1 -->
+      <section class="scene active" id="task1">
+        <img class="bg-img" src="./image/task1-bg.png" alt="task1 background" />
+
+        <div class="timer-panel" id="timerPanel">
+          <img
+            id="timerPanelImg"
+            src="./image/time-left-panel.png"
+            alt="time left panel"
+          />
+        </div>
+      </section>
+
+      <!-- outcome1 -->
+      <section class="scene" id="outcome1">
+       <img id="outcome1Bg" class="bg-img" src="./image/outcome1.png" alt="outcome1 background" />
+
+       <img
+         class="danger-panel danger-left"
+         src="./image/danger-left.png"
+         alt="danger left"
+       />
+
+       <img
+         class="danger-panel danger-right"
+         src="./image/danger-right.png"
+         alt="danger right"
+       />
+
+       <button id="task2Trigger" class="task-button task2-trigger" aria-label="Open task 2">
+         <img
+           class="task2-frame"
+           src="../assets/image/outcome-frame.svg"
+           alt=""
+         />
+          <span class="task2-text">任务二</span>
+       </button>
+     </section>
+
+     <!-- task2 -->
+     <section class="scene" id="task2">
+        <img class="bg-img" src="./image/task2-bg.png" alt="task2 background" />
+        <div class="timer-panel">
+         <img
+           src="./image/time-left-panel.png"
+           alt="time left panel"
+         />
+       </div>
+     </section>
+
+     <!-- outcome2 -->
+     <section class="scene" id="outcome2">
+       <img id="outcome2Bg" class="bg-img" src="./image/outcome2.png" alt="outcome2 background" />
+
+       <img
+         class="danger-panel danger-left"
+         src="./image/danger-left.png"
+         alt="danger left"
+       />
+
+       <img
+         class="danger-panel danger-right"
+         src="./image/danger-right.png"
+         alt="danger right"
+       />
+
+       <button id="task3Trigger" class="task-button task3-trigger" aria-label="Open task 3">
+         <img
+           class="task3-frame"
+           src="../assets/image/outcome-frame.svg"
+           alt=""
+         />
+         <span class="task3-text">任务三</span>
+       </button>
+     </section>
+
+     <!-- task3 -->
+     <section class="scene" id="task3">
+       <img class="bg-img" src="./image/task3-bg.png" alt="task3 background" />
+        <div class="timer-panel">
+         <img
+           src="./image/time-left-panel.png"
+           alt="time left panel"
+         />
+       </div>
+     </section>
+
+     <!-- outcome3 -->
+     <section class="scene" id="outcome3">
+       <img id="outcome3Bg" class="bg-img" src="./image/outcome3.png" alt="outcome3 background" />
+
+       <img
+         class="danger-panel danger-left"
+         src="./image/danger-left.png"
+         alt="danger left"
+       />
+
+       <img
+         class="danger-panel danger-right"
+         src="./image/danger-right.png"
+         alt="danger right"
+       />
+
+       <button id="reminiscenceTrigger" class="reminiscence-trigger" aria-label="Open reminiscence">
+         <img
+           class="reminiscence-frame"
+           src="../assets/image/outcome-frame.svg"
+           alt=""
+         />
+         <span class="reminiscence-text">回忆录</span>
+       </button>
+     </section>
+
+      
+
+      <!-- 弹窗：一定放在 stage 里面，所有 scene 后面 -->
+      <div id="popupOverlay" class="popup-overlay">
+       <div class="popup-card glitch-popup" id="glitchPopup">
+         <img id="popupMain" class="popup-main" src="./image/image1.png" alt="task popup image" />
+
+         <img id="popupGhostA" class="popup-ghost popup-ghost-a" src="./image/image1.png" alt="" />
+         <img id="popupGhostB" class="popup-ghost popup-ghost-b" src="./image/image1.png" alt="" />
+
+         <div class="glitch-slice slice-1">
+           <img class="popupSliceImg" src="./image/image1.png" alt="" />
+         </div>
+
+         <div class="glitch-slice slice-2">
+           <img class="popupSliceImg" src="./image/image1.png" alt="" />
+         </div>
+
+         <div class="glitch-slice slice-3">
+           <img class="popupSliceImg" src="./image/image1.png" alt="" />
+         </div>
+
+         <div class="popup-noise"></div>
+         <div class="popup-scanline"></div>
+       </div>
+     </div>
+
+  <audio
+    id="alarmSound"
+    src="./sound/alexis_gaming_cam-alarme-342932.mp3"
+    loop
+    preload="auto"
+  ></audio>
+
+  <!-- ✅ 背景环境音 -->
+ <audio
+   id="bgmAmbient"
+   src="./sound/ambient-loop.mp3"
+   loop
+   preload="auto"
+ ></audio>
+
+ <!-- ✅ 故障音 -->
+ <audio
+   id="bgmGlitch"
+   src="./sound/glitch.mp3"
+   loop
+   preload="auto"
+ ></audio>
+
+ <audio
+   id="popupSound"
+   src="./sound/electric-words.mp3"
+   preload="auto"
+ ></audio>
+
+ <script src="../assets/click-sound.js"></script> 
+ <script src="./scene2.js"></script>
+</body>
+</html>

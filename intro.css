@@ -1,0 +1,1554 @@
+* {
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-family: "Noto Sans SC";
+  src: url("assets/fonts/NotoSansSC-VF.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-weight: 400;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+:root {
+  --stage-w: 1440;
+  --stage-h: 1024;
+  --stage-scale: 1;
+}
+
+/* 外层只负责把整块舞台居中显示 */
+.stage-shell {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: #000;
+}
+
+/* 内部舞台尺寸永远固定 */
+.stage {
+  position: relative;
+  width: 1440px;
+  height: 1024px;
+  overflow: hidden;
+  background: #000;
+
+  transform: scale(var(--stage-scale));
+  transform-origin: center center;
+}
+
+/* 每一页都是同一舞台里的一个层 */
+.screen {
+  position: absolute;
+  inset: 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* =========================
+   开场上下分裂遮罩
+   ========================= */
+
+
+
+.curtain-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: auto;
+  overflow: hidden;
+}
+
+.curtain-half {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: linear-gradient(
+    to bottom,
+    #000000 0%,
+    #050505 35%,
+    #000000 100%
+  );
+  transition: transform 1s cubic-bezier(0.77, 0, 0.18, 1),
+              opacity 0.8s ease;
+  will-change: transform, opacity;
+}
+
+.curtain-top {
+  top: 0;
+}
+
+.curtain-bottom {
+  bottom: 0;
+}
+
+.curtain-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.curtain-hint {
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-size: 22px;
+  letter-spacing: 0.24em;
+  color: rgba(255, 255, 255, 0.78);
+  text-transform: uppercase;
+  opacity: 0.85;
+  animation: curtainHintBlink 1.8s ease-in-out infinite;
+  text-shadow:
+    0 0 8px rgba(255,255,255,0.16),
+    0 0 18px rgba(255,255,255,0.08);
+}
+
+@keyframes curtainHintBlink {
+  0%, 100% {
+    opacity: 0.28;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+/* 打开状态：上下分裂 */
+.curtain-overlay.open .curtain-top {
+  transform: translateY(-100%);
+}
+
+.curtain-overlay.open .curtain-bottom {
+  transform: translateY(100%);
+}
+
+.curtain-overlay.open .curtain-center {
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+/* 打开后整体淡掉并失效 */
+.curtain-overlay.finished {
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+/* ========== 第一页：首页 ========== */
+
+.screen-intro {
+  z-index: 10;
+}
+
+.bg-img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1440px;
+  height: 1024px;
+  object-fit: cover;
+  display: block;
+  z-index: 0;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(18, 8, 28, 0.06) 0%,
+      rgba(0, 0, 0, 0.10) 58%,
+      rgba(0, 0, 0, 0.40) 100%
+    );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 标题容器 */
+.title-wrap {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.title-glitch-wrap {
+  position: absolute;
+  left: 185px;
+  top: 268px;
+  width: 1070px;
+  height: auto;
+}
+
+.base-title {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1070px;
+  height: auto;
+  display: block;
+  z-index: 3;
+  opacity: 0;
+  transform: translateY(140px);
+}
+
+.glitch-slice {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1010px;
+  height: auto;
+  display: block;
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0;
+}
+
+.slice-1 {
+  clip-path: inset(18% 0 68% 0);
+}
+
+.slice-2 {
+  clip-path: inset(42% 0 40% 0);
+}
+
+.slice-3 {
+  clip-path: inset(70% 0 12% 0);
+}
+
+.reflection-img {
+  position: absolute;
+  left: 195px;
+  top: 476px;
+  width: 1033px;
+  height: auto;
+  display: block;
+  z-index: 2;
+  clip-path: inset(0 0 100% 0);
+  opacity: 0.2;
+}
+
+/* Start Game 按钮 */
+.start-btn {
+  position: absolute;
+  left: 442px;
+  top: 849px;
+  width: 556px;
+  height: 117.57px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0;
+  z-index: 10;
+}
+
+/* =========================
+   首页动画：只有点击开幕后才启动
+   ========================= */
+
+.screen-intro.intro-started .base-title {
+  animation: titleRise 2s ease-out forwards;
+}
+
+.screen-intro.intro-started .slice-1 {
+  animation: sliceFlash1 1.2s steps(2, end) 2s infinite;
+}
+
+.screen-intro.intro-started .slice-2 {
+  animation: sliceFlash2 1.1s steps(2, end) 2.1s infinite;
+}
+
+.screen-intro.intro-started .slice-3 {
+  animation: sliceFlash3 1.3s steps(2, end) 2.2s infinite;
+}
+
+.screen-intro.intro-started .reflection-img {
+  animation: reflectionReveal 1.2s ease-out 1.6s forwards;
+}
+
+.screen-intro.intro-started .start-btn {
+  animation: buttonShow 0.8s ease-out 2.7s forwards;
+}
+
+.start-btn-frame {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+.start-btn-text {
+  position: absolute;
+  left: 49%;
+  top: 52%;
+  transform: translate(-50%, -56%);
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #cf58ff;
+  white-space: nowrap;
+  pointer-events: none;
+  text-shadow: 0 0 6px rgba(207, 88, 255, 0.18);
+}
+
+.start-btn:hover .start-btn-frame {
+  filter:
+    drop-shadow(0 0 8px rgba(121, 41, 255, 0.35))
+    drop-shadow(0 0 18px rgba(121, 41, 255, 0.18));
+}
+
+.start-btn:hover .start-btn-text {
+  text-shadow:
+    0 0 10px rgba(207, 88, 255, 0.35),
+    0 0 22px rgba(207, 88, 255, 0.15);
+}
+
+.start-btn:active {
+  transform: translateY(1px);
+}
+
+/* ========== 第二页：introduction ========== */
+
+.screen-introduction {
+  z-index: 30;
+  background: #000;
+}
+
+/* 原始 introduction 背景 */
+.intro-page-img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1440px;
+  height: 1024px;
+  object-fit: cover;
+  display: block;
+  z-index: 1;
+}
+
+/* 原本的蓝色框 */
+.intro-frame-img {
+  position: absolute;
+  left: 80px;
+  top: 80px;
+  width: 1280px;
+  height: 668px;
+  object-fit: cover;
+  display: block;
+  z-index: 2;
+  transform: translateY(280px);
+  opacity: 0;
+}
+
+.intro-frame-img.rise-in {
+  animation: introFrameRise 1.15s ease-out forwards;
+}
+
+/* 原本的正文 */
+.intro-body-text {
+  position: absolute;
+  left: 184px;
+  top: 254px;
+  width: 1071px;
+  height: auto;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 42px;
+  color: rgba(255, 255, 255, 1);
+  white-space: pre-wrap;
+  word-break: break-word;
+  z-index: 3;
+  opacity: 0;
+}
+
+.intro-body-text.blur-out {
+  filter: blur(4px);
+  opacity: 0.72;
+  transition: filter 0.2s linear, opacity 0.2s linear;
+}
+
+/* introduction 页里的 Start Working 按钮 */
+.work-btn {
+  position: absolute;
+  left: 480px;
+  top: 839px;
+  width: 481.59px;
+  height: 102px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  z-index: 5;
+  opacity: 0;
+  transform: translateY(120px);
+}
+
+.work-btn-frame {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+.work-btn-text {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -56%);
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-size: 34px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.work-btn.rise-in {
+  animation: workBtnRise 0.9s ease-out forwards;
+}
+
+.work-btn:hover .work-btn-frame {
+  filter:
+    drop-shadow(0 0 8px rgba(161, 252, 254, 0.35))
+    drop-shadow(0 0 18px rgba(161, 252, 254, 0.18));
+}
+
+.work-btn:hover .work-btn-text {
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, 0.18),
+    0 0 14px rgba(161, 252, 254, 0.12);
+}
+
+/* 黑色半透明遮罩：盖住整个舞台，但在黑色信息面板下方 */
+.intro-dim {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1440px;
+  height: 1024px;
+
+  background: rgba(0, 0, 0, 0.3);
+
+  backdrop-filter: blur(10px) saturate(1.15) contrast(1.05);
+  -webkit-backdrop-filter: blur(10px) saturate(1.15) contrast(1.05);
+
+  z-index: 5;
+  opacity: 1;
+  transition: none;
+  pointer-events: none;
+}
+
+.intro-dim.show {
+  opacity: 1;
+}
+/* ========== 黑色信息面板效果（最终可见版） ========== */
+
+.message-panel {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1440px;
+  height: 1024px;
+  z-index: 10;
+  overflow: hidden;
+  opacity: 1;
+  pointer-events: none;
+}
+
+.message-panel.show {
+  opacity: 1;
+}
+
+/* 面板图片共用 */
+.message-panel-img {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  height: 1024px;
+  width: auto;
+  transform: translateX(-50%);
+  display: block;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* 主面板本体 */
+/* 主面板本体：稳定显示 */
+.message-panel-img.base {
+  z-index: 1;
+  opacity: 1;
+}
+
+/* 故障区域：只取 panel 的上方一小块 */
+.panel-glitch-zone {
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+
+  /* 只显示标题区 + 上边框附近 */
+  clip-path: inset(100px 0 35% 0);
+}
+
+/* 主故障层 */
+.zone-base {
+  mix-blend-mode: normal;
+}
+
+/* 偏色层 */
+.zone-magenta {
+  mix-blend-mode: screen;
+  filter: hue-rotate(-35deg) saturate(1.8) brightness(1.2);
+}
+
+.zone-cyan {
+  mix-blend-mode: screen;
+  filter: hue-rotate(140deg) saturate(1.7) brightness(1.15);
+}
+
+/* 局部切片：也是只在上方 */
+.panel-zone-slice {
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+/* 三条更细的标题区切片 */
+.zone-slice-1 {
+  clip-path: inset(0 0 86% 0);
+}
+
+.zone-slice-2 {
+  clip-path: inset(7% 0 79% 0);
+}
+
+.zone-slice-3 {
+  clip-path: inset(14% 0 71% 0);
+}
+
+.message-panel.show .zone-base {
+  animation: panelZoneBaseGlitch 1.1s steps(2, end) infinite;
+}
+
+.message-panel.show .zone-magenta {
+  animation: panelZoneMagentaGlitch 1.1s steps(2, end) infinite;
+}
+
+.message-panel.show .zone-cyan {
+  animation: panelZoneCyanGlitch 1.1s steps(2, end) infinite;
+}
+
+.message-panel.show .zone-slice-1 {
+  animation: panelZoneSlice1 1.8s steps(2, end) infinite;
+}
+
+.message-panel.show .zone-slice-2 {
+  animation: panelZoneSlice2 2s steps(2, end) infinite;
+}
+
+.message-panel.show .zone-slice-3 {
+  animation: panelZoneSlice3 1.7s steps(2, end) infinite;
+}
+
+.panel-glitch {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.018) 0px,
+      rgba(255,255,255,0.018) 1px,
+      transparent 2px,
+      transparent 4px
+    );
+  opacity: 0.04;
+  mix-blend-mode: screen;
+  animation: panelScan 2.4s linear infinite;
+  pointer-events: none;
+}
+
+/* ========== 三层文字系统 ========== */
+
+/* 第一层 + 第二层的主显示区域 */
+.panel-text-stage {
+  position: absolute;
+  left: 184px;
+  top: 148px;
+  width: 1071px;
+  height: 360px;
+  overflow: hidden;
+  z-index: 11;
+  pointer-events: none;
+}
+
+/* 白字 + 同步红绿字叠放容器 */
+.typing-stack {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1071px;
+  min-height: 360px;
+}
+
+/* 文字通用 */
+.text-layer,
+.scroll-text {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1071px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 33px;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-size: 28px;
+  letter-spacing: 0em;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+/* 第一层：白字主层 */
+.main-layer,
+.text-white {
+  transform: translate(0, 0);
+  color: #ffffff;
+  z-index: 3;
+  opacity: 1;
+  transition: opacity 0.55s ease, filter 0.55s ease;
+}
+
+.text-white.fade-out {
+  opacity: 0;
+  filter: blur(2px);
+}
+
+/* 第二层：同步红绿错位层 */
+.ghost-layer {
+  z-index: 2;
+}
+
+.text-red {
+  transform: translate(-7px, -10px);
+  color: rgba(145, 20, 20, 0.88);
+  text-shadow: 0 0 8px rgba(120, 0, 0, 0.24);
+  opacity: 0.78;
+  filter: blur(1px);
+}
+
+.text-green {
+  transform: translate(7px, 10px);
+  color: rgba(110, 255, 230, 0.34);
+  text-shadow: 0 0 8px rgba(90, 255, 220, 0.14);
+  opacity: 0.52;
+  filter: blur(1.2px);
+}
+
+/* 第二层后续滚动区：负责红绿同步层在白字结束后继续往上滚 */
+.ghost-scroll-layer {
+  position: absolute;
+  left: 184px;
+  top: 148px;
+  width: 1071px;
+  height: 360px;
+  overflow: hidden;
+  z-index: 10;
+  pointer-events: none;
+
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.15) 8%,
+    rgba(0, 0, 0, 0.55) 16%,
+    rgba(0, 0, 0, 1) 28%,
+    rgba(0, 0, 0, 1) 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.15) 8%,
+    rgba(0, 0, 0, 0.55) 16%,
+    rgba(0, 0, 0, 1) 28%,
+    rgba(0, 0, 0, 1) 100%
+  );
+}
+
+.ghost-scroll-track {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1071px;
+  height: auto;
+  will-change: transform;
+  transform: translateY(0);
+  opacity: 0;
+}
+
+/* 给 JS 用：启动同步红绿上滚 */
+.ghost-scroll-layer.active .ghost-scroll-track {
+  opacity: 1;
+}
+
+/* 第三层：全屏底部洪流区 */
+.screen-scroll-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 9;
+  pointer-events: none;
+}
+
+.screen-scroll-track {
+  position: absolute;
+  left: 184px;
+  top: 0;
+  width: 1071px;
+  will-change: transform, filter, opacity;
+  transform: translateY(0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.flood-copy {
+  position: absolute;
+  left: 0;
+  width: 1071px;
+  height: auto;
+}
+
+.flood-line {
+  position: absolute;
+  left: 0;
+  width: 1071px;
+  white-space: nowrap;
+  font-family: "CascadiaCodeRegular", monospace;
+  font-size: 28px;
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+
+.flood-line-red {
+  color: #7A0000;
+  text-shadow: 0 0 10px rgba(122, 0, 0, 0.32);
+}
+
+.flood-line-green {
+  color: #284A4B;
+  text-shadow: 0 0 10px rgba(40, 74, 75, 0.28);
+}
+
+#floodCopy1 {
+  top: 0;
+}
+
+#floodCopy2 {
+  top: 0; /* JS里会改成接在第一份下面 */
+}
+
+.scroll-text {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1071px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 33px;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-size: 28px;
+  letter-spacing: 0em;
+  will-change: transform, opacity, filter;
+  pointer-events: none;
+}
+
+#redLayerClone2,
+#greenLayerClone2,
+#redLayerClone3,
+#greenLayerClone3 {
+  top: 0;
+  left: 0;
+}
+
+.scroll-red {
+  color: #7A0000;
+  text-shadow: 0 0 10px rgba(122, 0, 0, 0.32);
+}
+
+.scroll-green {
+  color: #284A4B;
+  text-shadow: 0 0 10px rgba(40, 74, 75, 0.28);
+}
+
+/* 第二层滚动层 */
+#redLayerClone,
+#greenLayerClone {
+  top: 0;
+}
+
+/* 第三层：明确做成上下排列 */
+#redLayerClone2,
+#greenLayerClone2 {
+  top: 0;
+  left: 0;
+}
+
+.flood-text {
+  opacity: 0.42;
+}
+
+/* 可选：让洪流层整体有一点淡入 */
+.screen-scroll-layer.fade-in {
+  animation: floodLayerFadeIn 0.55s ease forwards;
+}
+
+@keyframes floodLayerFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 第二层：同步红绿层向上滚出 */
+.ghost-scroll-track.scroll-up-slow {
+  animation: ghostScrollUpSlow 4.8s linear forwards;
+}
+
+@keyframes ghostScrollUpSlow {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-430px);
+  }
+}
+
+/* 第三层：底部洪流初始慢速滚动 */
+.screen-scroll-track.flood-run {
+  animation: floodScrollRun 10s linear forwards;
+}
+
+@keyframes floodScrollRun {
+  from {
+    transform: translateY(820px);
+  }
+  to {
+    transform: translateY(-1200px);
+  }
+}
+
+/* 第三层：更快版本，后续 JS 可切换这个 class */
+.screen-scroll-track.flood-run-fast {
+  animation: floodScrollRunFast 6.2s linear forwards;
+}
+
+@keyframes floodScrollRunFast {
+  from {
+    transform: translateY(820px);
+  }
+  to {
+    transform: translateY(-1400px);
+  }
+}
+
+
+/* 最终黑屏层 */
+.final-blackout {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.final-blackout.show {
+  display: block;
+  animation: fullBlackout 0.9s steps(2, end) forwards;
+}
+
+/* ========== 动画 ========== */
+
+@keyframes titleRise {
+  0% {
+    opacity: 0;
+    transform: translateY(140px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes reflectionReveal {
+  0% {
+    clip-path: inset(0 0 100% 0);
+    opacity: 0.2;
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 0.7;
+  }
+}
+
+@keyframes buttonShow {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes introFrameRise {
+  0% {
+    transform: translateY(280px);
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes workBtnRise {
+  0% {
+    opacity: 0;
+    transform: translateY(120px);
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 首页标题故障切片 */
+@keyframes sliceFlash1 {
+  0%, 70%, 100% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  72% {
+    opacity: 0.85;
+    transform: translateX(-8px);
+  }
+  75% {
+    opacity: 0.5;
+    transform: translateX(6px);
+  }
+  78% {
+    opacity: 0.72;
+    transform: translateX(-4px);
+  }
+  80% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+}
+
+@keyframes sliceFlash2 {
+  0%, 65%, 100% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  67% {
+    opacity: 0.9;
+    transform: translateX(10px);
+  }
+  70% {
+    opacity: 0.45;
+    transform: translateX(-7px);
+  }
+  73% {
+    opacity: 0.72;
+    transform: translateX(4px);
+  }
+  75% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+}
+
+@keyframes sliceFlash3 {
+  0%, 60%, 100% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  62% {
+    opacity: 0.75;
+    transform: translateX(-6px);
+  }
+  66% {
+    opacity: 0.45;
+    transform: translateX(8px);
+  }
+  70% {
+    opacity: 0.62;
+    transform: translateX(-3px);
+  }
+  72% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+}
+
+/* 面板扫描噪点：保留但不要太强 */
+@keyframes panelScan {
+  0%, 100% {
+    opacity: 0.06;
+  }
+  50% {
+    opacity: 0.12;
+  }
+}
+
+/* 最终黑屏 */
+@keyframes fullBlackout {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  12% {
+    opacity: 0.18;
+    transform: translateX(-12px);
+  }
+  28% {
+    opacity: 0.42;
+    transform: translateX(10px);
+  }
+  46% {
+    opacity: 0.62;
+    transform: translateX(-8px);
+  }
+  70% {
+    opacity: 0.84;
+    transform: translateX(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes panelZoneBaseGlitch {
+  0%, 88%, 100% {
+    opacity: 0;
+    transform: translateX(-50%) translateX(0);
+    filter: brightness(1);
+  }
+  89% {
+    opacity: 1;
+    transform: translateX(-50%) translateX(-10px);
+    filter: brightness(1.35) contrast(1.15);
+  }
+  91% {
+    opacity: 1;
+    transform: translateX(-50%) translateX(7px);
+    filter: brightness(0.9) contrast(1.1);
+  }
+  93% {
+    opacity: 0.9;
+    transform: translateX(-50%) translateX(-4px);
+    filter: brightness(1.15) contrast(1.08);
+  }
+}
+
+@keyframes panelZoneMagentaGlitch {
+  0%, 88%, 100% {
+    opacity: 0;
+    transform: translateX(-50%) translateX(0);
+  }
+  89% {
+    opacity: 0.7;
+    transform: translateX(-50%) translateX(12px);
+  }
+  91% {
+    opacity: 0.45;
+    transform: translateX(-50%) translateX(-6px);
+  }
+  93% {
+    opacity: 0.22;
+    transform: translateX(-50%) translateX(4px);
+  }
+}
+
+@keyframes panelZoneCyanGlitch {
+  0%, 88%, 100% {
+    opacity: 0;
+    transform: translateX(-50%) translateX(0);
+  }
+  89% {
+    opacity: 0.72;
+    transform: translateX(-50%) translateX(-12px);
+  }
+  91% {
+    opacity: 0.42;
+    transform: translateX(-50%) translateX(6px);
+  }
+  93% {
+    opacity: 0.2;
+    transform: translateX(-50%) translateX(-4px);
+  }
+}
+
+@keyframes panelZoneSlice1 {
+  0%, 90%, 100% {
+    opacity: 0;
+    transform: translateX(-50%) translateX(0);
+  }
+  91% {
+    opacity: 0.8;
+    transform: translateX(-50%) translateX(-26px);
+  }
+  94% {
+    opacity: 0.3;
+    transform: translateX(-50%) translateX(14px);
+  }
+}
+
+@keyframes panelZoneSlice2 {
+  0%, 91%, 100% {
+    opacity: 0;
+    transform: translateX(-50%) translateX(0);
+  }
+  92% {
+    opacity: 0.78;
+    transform: translateX(-50%) translateX(30px);
+  }
+  95% {
+    opacity: 0.28;
+    transform: translateX(-50%) translateX(-16px);
+  }
+}
+
+@keyframes panelZoneSlice3 {
+  0%, 89%, 100% {
+    opacity: 0;
+    transform: translateX(-50%) translateX(0);
+  }
+  90% {
+    opacity: 0.74;
+    transform: translateX(-50%) translateX(-22px);
+  }
+  93% {
+    opacity: 0.25;
+    transform: translateX(-50%) translateX(12px);
+  }
+}
+
+/* ===== 第三层后期失控效果 ===== */
+
+.screen-scroll-layer.overload {
+  animation: floodOverloadFlicker 0.14s steps(2, end) infinite;
+}
+
+@keyframes floodOverloadFlicker {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.92;
+  }
+}
+
+/* 轻微整体抖动 */
+.screen-scroll-track.micro-shake {
+  animation: floodMicroShake 0.07s steps(2, end) infinite;
+}
+
+@keyframes floodMicroShake {
+  0%   { margin-left: 0px; margin-top: 0px; }
+  20%  { margin-left: -4px; margin-top: 2px; }
+  40%  { margin-left: 5px; margin-top: -3px; }
+  60%  { margin-left: -3px; margin-top: 4px; }
+  80%  { margin-left: 4px; margin-top: -2px; }
+  100% { margin-left: 0px; margin-top: 0px; }
+}
+
+/* 红段 / 青段各自的后期不稳定 */
+.flood-text.line-skew-red {
+  animation: lineSkewRed 0.16s steps(2, end) infinite;
+}
+
+.flood-text.line-skew-green {
+  animation: lineSkewGreen 0.18s steps(2, end) infinite;
+}
+
+@keyframes lineSkewRed {
+  0%, 100% {
+    clip-path: inset(0 0 0 0);
+  }
+  30% {
+    clip-path: inset(0 0 2% 0);
+  }
+  60% {
+    clip-path: inset(1% 0 0 0);
+  }
+}
+
+@keyframes lineSkewGreen {
+  0%, 100% {
+    clip-path: inset(0 0 0 0);
+  }
+  40% {
+    clip-path: inset(2% 0 0 0);
+  }
+  70% {
+    clip-path: inset(0 0 2% 0);
+  }
+}
+
+/* 局部撕裂闪帧 */
+.flood-text.slice-tear-red,
+.flood-text.slice-tear-green {
+  position: absolute;
+  left: 0;
+  width: 1071px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 33px;
+   font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-size: 28px;
+  letter-spacing: 0em;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 12;
+}
+
+.flood-text.slice-tear-red {
+  color: #7A0000;
+  text-shadow: 0 0 12px rgba(122, 0, 0, 0.34);
+  filter: blur(0.15px);
+  mix-blend-mode: screen;
+}
+
+.flood-text.slice-tear-green {
+  color: #284A4B;
+  text-shadow: 0 0 12px rgba(40, 74, 75, 0.3);
+  filter: blur(0.15px);
+  mix-blend-mode: screen;
+}
+
+.remember-screen {
+  position: absolute;
+  inset: 0;
+  background: #000;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.remember-screen.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.remember-text {
+ font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-weight: 700;
+  font-size: 96px;
+  color: #ffffff;
+  letter-spacing: 0.04em;
+  text-align: center;
+  white-space: nowrap;
+
+  opacity: 0;
+  transform: scale(2.6);
+  filter: blur(6px);
+}
+
+.remember-text.play {
+  animation: rememberZoom 2.8s ease-out forwards;
+}
+
+.remember-text.fade-out {
+  animation: rememberTextFadeOut 0.8s ease forwards;
+}
+
+.remember-screen.fade-out {
+  animation: rememberScreenFadeOut 0.8s ease forwards;
+}
+
+@keyframes rememberTextFadeOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.96);
+    filter: blur(4px);
+  }
+}
+
+@keyframes rememberScreenFadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes rememberZoom {
+  0% {
+    opacity: 0;
+    transform: scale(2.6);
+    filter: blur(6px);
+  }
+  20% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 1;
+    transform: scale(0.95);
+    filter: blur(2px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.02);
+    filter: blur(1px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+.remember-text.glitch-in {
+  animation:
+    rememberZoom 2.8s ease-out forwards,
+    whoGlitch 0.18s steps(2, end) 10;
+}
+
+@keyframes whoGlitch {
+  0% {
+    transform: scale(1) translate(0, 0);
+    text-shadow: 0 0 0 rgba(255,255,255,0);
+  }
+
+  20% {
+    transform: scale(1.01) translate(-2px, 0);
+    text-shadow:
+      2px 0 rgba(255, 0, 90, 0.45),
+      -2px 0 rgba(0, 255, 255, 0.35);
+  }
+
+  40% {
+    transform: scale(0.995) translate(2px, -1px);
+    text-shadow:
+      -3px 0 rgba(255, 0, 90, 0.38),
+      3px 0 rgba(0, 255, 255, 0.3);
+  }
+
+  60% {
+    transform: scale(1.005) translate(-1px, 1px);
+    text-shadow:
+      2px 0 rgba(255, 0, 90, 0.3),
+      -2px 0 rgba(0, 255, 255, 0.25);
+  }
+
+  80% {
+    transform: scale(1) translate(1px, 0);
+    text-shadow:
+      -1px 0 rgba(255, 0, 90, 0.2),
+      1px 0 rgba(0, 255, 255, 0.18);
+  }
+
+  100% {
+    transform: scale(1) translate(0, 0);
+    text-shadow: 0 0 0 rgba(255,255,255,0);
+  }
+}
+
+.name-entry-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(10px) saturate(1.05);
+  -webkit-backdrop-filter: blur(10px) saturate(1.05);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  opacity: 0;
+  pointer-events: none;
+}
+
+.name-entry-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.name-entry-wrap {
+  position: relative;
+  width: 760px;
+  height: 260px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.name-frame-img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 700px;
+  height: auto;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  user-select: none;
+}
+
+.name-entry-label {
+  position: absolute;
+  left: 51px;
+  top: 28px;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-weight: 600;
+  font-size: 36px;
+  color: #A1FCFE;
+  letter-spacing: 0em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.name-display {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -42%);
+  width: 445px;
+  min-height: 96px;
+
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-weight: 700;
+  font-size: 96px;
+  line-height: 1;
+  color: #A1FCFE;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* 隐形真实输入框：只负责接收键盘 */
+.name-input {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -42%);
+  width: 420px;
+  height: 80px;
+
+  opacity: 0.01;           /* 不要完全 0，某些浏览器更稳 */
+  z-index: 5;              /* 保证在显示文字层上面 */
+  background: transparent;
+  border: none;
+  outline: none;
+
+  color: transparent;
+  caret-color: transparent;
+}
+
+/* 自定义光标 */
+.name-display.caret::after {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 0.9em;
+  margin-left: 10px;
+  vertical-align: -0.08em;
+  background: #c8fbff;
+  box-shadow:
+    0 0 8px rgba(200, 251, 255, 0.5),
+    0 0 16px rgba(120, 240, 255, 0.22);
+  animation: inputCaretBlink 0.9s steps(1, end) infinite;
+}
+
+@keyframes inputCaretBlink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+.name-display.error {
+  color: #FF0000;
+
+  text-shadow:
+    0 0 8px rgba(255, 0, 0, 0.6),
+    0 0 16px rgba(255, 0, 0, 0.35);
+
+  animation: nameErrorFlash 0.5s steps(2, end) 3;
+}
+
+@keyframes nameErrorFlash {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+}
+
+/* 整体抖动 */
+.name-entry-wrap.shake {
+  animation: nameShake 0.35s ease;
+}
+
+@keyframes nameShake {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-6px, 2px); }
+  40%  { transform: translate(6px, -2px); }
+  60%  { transform: translate(-4px, 2px); }
+  80%  { transform: translate(4px, -1px); }
+  100% { transform: translate(0, 0); }
+}

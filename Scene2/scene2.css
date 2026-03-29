@@ -1,0 +1,851 @@
+* {
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-family: "Noto Sans SC";
+  src: url("assets/fonts/NotoSansSC-VF.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000000;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-weight: 400;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+.viewport {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* 固定设计稿尺寸，用 JS 缩放适配窗口 */
+.stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1440px;
+  height: 1024px;
+  transform-origin: center center;
+  overflow: hidden;
+  background: #000000;
+}
+
+/* 场景 */
+.scene {
+  position: absolute;
+  inset: 0;
+  display: none;
+}
+
+.scene.active {
+  display: block;
+  animation: fadeIn 0.45s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 背景图 */
+.bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* task1 的 TIME LEFT */
+.timer-panel {
+  position: absolute;
+  left: 448px;
+  top: 619px;
+  width: 533px;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.timer-panel img {
+  display: block;
+  width: 100%;
+  user-select: none;
+  -webkit-user-drag: none;
+  filter:
+    drop-shadow(0 0 6px rgba(160, 255, 255, 0.35))
+    drop-shadow(0 0 12px rgba(160, 255, 255, 0.18));
+}
+
+/* outcome1 左右 danger 模块 */
+.danger-panel {
+  position: absolute;
+  z-index: 30;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+
+  animation: dangerFlash 0.6s infinite;
+  filter:
+    drop-shadow(0 0 8px rgba(255, 70, 70, 0.28))
+    drop-shadow(0 0 18px rgba(255, 70, 70, 0.16));
+}
+
+/* 先按你这张图的布局给一组更接近的值 */
+.danger-left {
+  left: 91px;
+  top: 89px;
+  width: 277px;
+  animation-delay: 0s;
+}
+
+.danger-right {
+  right: 88px;
+  top: 89px;
+  width: 277px;
+  animation-delay: 0.28s;
+}
+
+@keyframes dangerFlash {
+  0% {
+    opacity: 1;
+    filter:
+      brightness(1)
+      drop-shadow(0 0 8px rgba(255, 70, 70, 0.28))
+      drop-shadow(0 0 18px rgba(255, 70, 70, 0.16));
+  }
+
+  20% {
+    opacity: 0.45;
+    filter:
+      brightness(0.72)
+      drop-shadow(0 0 4px rgba(255, 70, 70, 0.14))
+      drop-shadow(0 0 8px rgba(255, 70, 70, 0.08));
+  }
+
+  42% {
+    opacity: 1;
+    filter:
+      brightness(1.12)
+      drop-shadow(0 0 10px rgba(255, 70, 70, 0.34))
+      drop-shadow(0 0 22px rgba(255, 70, 70, 0.2));
+  }
+
+  58% {
+    opacity: 0.35;
+    filter:
+      brightness(0.58)
+      drop-shadow(0 0 3px rgba(255, 70, 70, 0.1))
+      drop-shadow(0 0 6px rgba(255, 70, 70, 0.05));
+  }
+
+  78% {
+    opacity: 1;
+    filter:
+      brightness(1.08)
+      drop-shadow(0 0 9px rgba(255, 70, 70, 0.32))
+      drop-shadow(0 0 18px rgba(255, 70, 70, 0.18));
+  }
+
+  100% {
+    opacity: 0.62;
+    filter:
+      brightness(0.82)
+      drop-shadow(0 0 5px rgba(255, 70, 70, 0.18))
+      drop-shadow(0 0 10px rgba(255, 70, 70, 0.08));
+  }
+}
+
+/* TASK2 点击区域 */
+
+.task2-trigger {
+  position: absolute;
+  left: 555px;
+  top: 596px;
+  width: 336px;
+  height: 110px;
+
+  border: none;
+  background: none;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+}
+
+
+/* 外框 */
+
+.task2-frame{
+
+  position: absolute;
+  inset: 0;   /* ⭐ 关键：让框完全贴合 */
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+
+}
+
+
+/* 文字 */
+
+.task2-text{
+
+ position: relative;   /* ⭐ 一定要 relative */
+
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 0px;
+
+  color: #FFFFFF;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  z-index: 2; /* ⭐ 确保在框上面 */
+
+}
+
+/* 调试位置用 */
+/*
+.task2-trigger{
+outline:2px solid red;
+}
+*/
+
+
+/* 弹窗 */
+
+.popup-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  display: none;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.78);
+}
+
+.popup-overlay.show {
+  display: grid;
+}
+
+.popup-card {
+  position: relative;
+  width: 1440px;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.popup-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.popup-main {
+  position: relative;
+  z-index: 3;
+  opacity: 1;
+}
+
+.popup-ghost {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: screen;
+}
+
+.popup-ghost-a {
+  transform: translate(-10px, 0);
+  filter: hue-rotate(-20deg) brightness(1.15);
+}
+
+.popup-ghost-b {
+  transform: translate(10px, 0);
+  filter: hue-rotate(20deg) brightness(1.1);
+}
+
+/* 横向撕裂切片 */
+.glitch-slice {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  opacity: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.glitch-slice img {
+  width: 100%;
+  display: block;
+}
+
+.slice-1 {
+  top: 14%;
+  height: 12%;
+}
+
+.slice-1 img {
+  transform: translateY(-14%);
+}
+
+.slice-2 {
+  top: 42%;
+  height: 10%;
+}
+
+.slice-2 img {
+  transform: translateY(-42%);
+}
+
+.slice-3 {
+  top: 68%;
+  height: 11%;
+}
+
+.slice-3 img {
+  transform: translateY(-68%);
+}
+
+/* 噪点层 */
+.popup-noise {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: screen;
+  background-image:
+    repeating-radial-gradient(circle at 20% 20%, rgba(255,255,255,0.18) 0 1px, transparent 1px 3px),
+    repeating-radial-gradient(circle at 70% 60%, rgba(255,255,255,0.12) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,0.08) 0 1px,
+      transparent 1px 3px
+    );
+}
+
+/* 扫描线 */
+.popup-scanline {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(170, 255, 255, 0.08) 0 2px,
+      transparent 2px 5px
+    );
+  mix-blend-mode: screen;
+}
+
+/* 故障启动 */
+.glitch-popup.is-glitching {
+  animation: popupBootGlitch 0.55s steps(1, end);
+}
+
+.glitch-popup.is-glitching .popup-main {
+  animation: popupMainTear 0.55s steps(1, end);
+}
+
+.glitch-popup.is-glitching .popup-ghost-a {
+  animation: popupGhostA 0.55s steps(1, end);
+}
+
+.glitch-popup.is-glitching .popup-ghost-b {
+  animation: popupGhostB 0.55s steps(1, end);
+}
+
+.glitch-popup.is-glitching .slice-1 {
+  animation: sliceShift1 0.55s steps(1, end);
+}
+
+.glitch-popup.is-glitching .slice-2 {
+  animation: sliceShift2 0.55s steps(1, end);
+}
+
+.glitch-popup.is-glitching .slice-3 {
+  animation: sliceShift3 0.55s steps(1, end);
+}
+
+.glitch-popup.is-glitching .popup-noise {
+  animation: popupNoiseFlash 0.55s steps(1, end);
+}
+
+.glitch-popup.is-glitching .popup-scanline {
+  animation: popupScanFlash 0.55s steps(1, end);
+}
+
+@keyframes popupBootGlitch {
+  0% { opacity: 0; }
+  8% { opacity: 1; }
+  14% { opacity: 0.2; }
+  20% { opacity: 1; }
+  28% { opacity: 0.45; }
+  100% { opacity: 1; }
+}
+
+@keyframes popupMainTear {
+  0% {
+    transform: scale(0.94) translate(0, 0);
+    filter: brightness(1.35);
+  }
+  10% {
+    transform: scale(1) translate(-12px, 0);
+    filter: brightness(0.8);
+  }
+  22% {
+    transform: scale(1.01) translate(14px, 0);
+    filter: brightness(1.2);
+  }
+  34% {
+    transform: scale(0.99) translate(-6px, 0);
+    filter: brightness(0.86);
+  }
+  48% {
+    transform: scale(1) translate(8px, 0);
+    filter: brightness(1.12);
+  }
+  100% {
+    transform: scale(1) translate(0, 0);
+    filter: brightness(1);
+  }
+}
+
+@keyframes popupGhostA {
+  0% { opacity: 0; }
+  12% { opacity: 0.55; }
+  24% { opacity: 0.12; }
+  38% { opacity: 0.42; }
+  100% { opacity: 0; }
+}
+
+@keyframes popupGhostB {
+  0% { opacity: 0; }
+  8% { opacity: 0.2; }
+  18% { opacity: 0.48; }
+  30% { opacity: 0.1; }
+  44% { opacity: 0.35; }
+  100% { opacity: 0; }
+}
+
+@keyframes sliceShift1 {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  14% {
+    opacity: 0.95;
+    transform: translateX(-28px);
+  }
+  24% {
+    opacity: 0.25;
+    transform: translateX(18px);
+  }
+  34% {
+    opacity: 0.8;
+    transform: translateX(-12px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+}
+
+@keyframes sliceShift2 {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  10% {
+    opacity: 0.7;
+    transform: translateX(24px);
+  }
+  20% {
+    opacity: 0.18;
+    transform: translateX(-14px);
+  }
+  36% {
+    opacity: 0.88;
+    transform: translateX(32px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+}
+
+@keyframes sliceShift3 {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  16% {
+    opacity: 0.8;
+    transform: translateX(-22px);
+  }
+  28% {
+    opacity: 0.2;
+    transform: translateX(10px);
+  }
+  42% {
+    opacity: 0.75;
+    transform: translateX(-30px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+}
+
+@keyframes popupNoiseFlash {
+  0% { opacity: 0; }
+  10% { opacity: 0.55; }
+  16% { opacity: 0.08; }
+  24% { opacity: 0.4; }
+  36% { opacity: 0.12; }
+  100% { opacity: 0; }
+}
+
+@keyframes popupScanFlash {
+  0% {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  14% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  26% {
+    opacity: 0.08;
+    transform: translateY(8px);
+  }
+  40% {
+    opacity: 0.22;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+}
+
+/* 消失时故障收束 */
+.glitch-popup.is-closing {
+  animation: popupCloseGlitch 0.32s steps(1, end) forwards;
+}
+
+.glitch-popup.is-closing .popup-main {
+  animation: popupMainCollapse 0.32s steps(1, end) forwards;
+}
+
+.glitch-popup.is-closing .popup-ghost-a {
+  animation: popupCloseGhostA 0.32s steps(1, end) forwards;
+}
+
+.glitch-popup.is-closing .popup-ghost-b {
+  animation: popupCloseGhostB 0.32s steps(1, end) forwards;
+}
+
+.glitch-popup.is-closing .slice-1 {
+  animation: sliceClose1 0.32s steps(1, end) forwards;
+}
+
+.glitch-popup.is-closing .slice-2 {
+  animation: sliceClose2 0.32s steps(1, end) forwards;
+}
+
+.glitch-popup.is-closing .slice-3 {
+  animation: sliceClose3 0.32s steps(1, end) forwards;
+}
+
+.glitch-popup.is-closing .popup-noise {
+  animation: popupCloseNoise 0.32s steps(1, end) forwards;
+}
+
+.glitch-popup.is-closing .popup-scanline {
+  animation: popupCloseScan 0.32s steps(1, end) forwards;
+}
+
+@keyframes popupCloseGlitch {
+  0% {
+    opacity: 1;
+  }
+  35% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.75;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes popupMainCollapse {
+  0% {
+    transform: translate(0, 0) scale(1);
+    filter: brightness(1);
+  }
+  18% {
+    transform: translate(8px, 0) scale(1.01, 1);
+    filter: brightness(1.28);
+  }
+  42% {
+    transform: translate(-14px, 0) scale(0.98, 1.02);
+    filter: brightness(0.78);
+  }
+  68% {
+    transform: translate(10px, 0) scale(1.02, 0.96);
+    filter: brightness(1.18);
+  }
+  100% {
+    transform: translate(0, 0) scale(0.82, 0.06);
+    filter: brightness(1.45);
+  }
+}
+
+@keyframes popupCloseGhostA {
+  0% {
+    opacity: 0;
+    transform: translate(-10px, 0);
+  }
+  20% {
+    opacity: 0.55;
+    transform: translate(-24px, 0);
+  }
+  55% {
+    opacity: 0.2;
+    transform: translate(12px, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-40px, 0);
+  }
+}
+
+@keyframes popupCloseGhostB {
+  0% {
+    opacity: 0;
+    transform: translate(10px, 0);
+  }
+  16% {
+    opacity: 0.45;
+    transform: translate(22px, 0);
+  }
+  50% {
+    opacity: 0.16;
+    transform: translate(-10px, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(36px, 0);
+  }
+}
+
+@keyframes sliceClose1 {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  20% {
+    opacity: 0.95;
+    transform: translateX(-42px);
+  }
+  52% {
+    opacity: 0.35;
+    transform: translateX(24px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-80px);
+  }
+}
+
+@keyframes sliceClose2 {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  16% {
+    opacity: 0.85;
+    transform: translateX(38px);
+  }
+  48% {
+    opacity: 0.28;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(76px);
+  }
+}
+
+@keyframes sliceClose3 {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  22% {
+    opacity: 0.9;
+    transform: translateX(-36px);
+  }
+  54% {
+    opacity: 0.3;
+    transform: translateX(18px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-72px);
+  }
+}
+
+@keyframes popupCloseNoise {
+  0% {
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.65;
+  }
+  44% {
+    opacity: 0.18;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes popupCloseScan {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  22% {
+    opacity: 0.32;
+    transform: translateY(-10px);
+  }
+  48% {
+    opacity: 0.12;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+}
+
+.task3-trigger {
+  position: absolute;
+  left: 557px;
+  top: 596px;
+  width: 336px;
+  height: 110px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+}
+
+.task3-frame {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.task3-text {
+  position: relative;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+
+  font-size:30px;
+  font-weight: 700;
+  letter-spacing:0px;
+
+  color:#FFFFFF;
+}
+
+.reminiscence-trigger {
+  position: absolute;
+  left: 557px;
+  top: 596px;
+  width: 336px;
+  height: 110px;
+
+  border: none;
+  background: none;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+}
+
+.reminiscence-frame {
+  position: absolute;
+  inset: 0;   /* ⭐ 关键：让框完全贴合 */
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.reminiscence-text {
+  position: relative;   /* ⭐ 一定要 relative */
+
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 0px;
+
+  color: #FFFFFF;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  z-index: 2; /* ⭐ 确保在框上面 */
+}

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Microphone</title>
+  <link rel="stylesheet" href="./microphone.css" />
+</head>
+<body>
+  <audio id="bgmAmbient" src="../assets/sounds/ambient-loop.mp3" loop></audio>
+  <audio id="bgmGlitch" src="./assets/sound/glitch.mp3" loop></audio>
+
+  <div id="app">
+    <div id="stage-scale">
+      <div id="stage">
+        <!-- 主问题文案 -->
+        <div id="question">
+          <div class="question-reveal">
+            <div class="question-line" data-text="你是否自愿成为">你是否自愿成为</div>
+          </div>
+          <div class="question-reveal">
+            <div class="question-line" data-text="一位新人类（即‘脑机人’）？">一位新人类（即‘脑机人’）？</div>
+          </div>
+        </div>
+
+        <!-- 提示文字 -->
+        <div id="speakHint">点击来回答</div>
+
+        <!-- 麦克风按钮 -->
+        <button id="micButton" aria-label="点击来回答">
+          <span class="mic-ripple ripple-1"></span>
+          <span class="mic-ripple ripple-2"></span>
+          <span class="mic-ripple ripple-3"></span>
+
+          <span class="mic-ring">
+            <svg
+              class="mic-icon"
+              width="58"
+              height="58"
+              viewBox="0 0 64 64"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect x="24" y="12" width="16" height="26" rx="8" fill="#454545"/>
+              <path d="M18 30C18 37.732 24.268 44 32 44C39.732 44 46 37.732 46 30" stroke="#454545" stroke-width="4" stroke-linecap="round"/>
+              <path d="M32 44V52" stroke="#454545" stroke-width="4" stroke-linecap="round"/>
+              <path d="M24 52H40" stroke="#454545" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </button>
+
+        <!-- 题目音频 -->
+        <audio id="questionAudio" preload="auto">
+          <source src="./assets/sound/question.mp3" type="audio/mpeg" />
+        </audio>
+      </div>
+
+      <div id="glitchFlash">
+        <div class="glitch-bar bar-1"></div>
+        <div class="glitch-bar bar-2"></div>
+        <div class="glitch-bar bar-3"></div>
+        <div class="glitch-bar bar-4"></div>
+        <div class="glitch-bar bar-5"></div>
+      </div>
+
+      <div id="endingText">
+        <div class="ending-line">你好 CITY 04,</div>
+        <div class="ending-line">欢迎来到 2033</div>
+      </div>
+
+      <div id="reportRoll">
+        <div id="reportContent">
+          <p>[ 系统报告 ]</p>
+          <p></p>
+          <p>转化方式：自愿服从</p>
+          <p>影响来源：信息诱导</p>
+          <p></p>
+          <p>主要目标群体：</p>
+          <p>经济脆弱人群</p>
+          <p></p>
+          <p>结果：</p>
+          <p>持续性资源提取成功</p>
+          <p></p>
+          <p>[ 'T.O.P' 集团有限公司 ]</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/click-sound.js"></script>
+  <script src="./microphone.js"></script>
+</body>
+</html>

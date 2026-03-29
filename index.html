@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CITY 04</title>
+  <link rel="stylesheet" href="intro.css" />
+</head>
+
+<body>
+  <!-- 音频 -->
+  <audio id="startBgm" src="assets/audio/start.mp3" preload="auto"></audio>
+  <audio id="glitchSfx" src="assets/audio/electric-sparks.mp3" preload="auto"></audio>
+  <audio id="introBgm" src="assets/audio/introduction-atmosphere.mp3" preload="auto"></audio>
+  <audio id="panelSfx" src="assets/audio/electric-words.mp3" preload="auto"></audio>
+  <audio id="disorderBgm" src="assets/audio/disorder.mp3" preload="auto"></audio>
+  <audio id="wrongSfx" src="assets/audio/wrong.mp3" preload="auto"></audio>
+  <audio id="correctSfx" src="assets/audio/correct.mp3" preload="auto"></audio>
+
+  <div class="stage-shell">
+    <div class="stage">
+
+      <!-- 开场遮罩：上下分裂 -->
+      <div class="curtain-overlay" id="curtainOverlay">
+        <div class="curtain-half curtain-top"></div>
+        <div class="curtain-half curtain-bottom"></div>
+
+        <div class="curtain-center" id="curtainCenter">
+          <div class="curtain-hint">CLICK TO ENTER</div>
+       </div>
+     </div>
+
+      <!-- 第一页：开场页 -->
+      <div class="screen screen-intro intro-waiting" id="screenIntro">
+        <img class="bg-img" src="assets/image/intro-bg.png" alt="background" />
+        <div class="overlay"></div>
+
+        <div class="title-wrap">
+          <div class="title-glitch-wrap">
+            <img class="title-img base-title" src="assets/image/title-main.png" alt="CITY 04" />
+            <img class="title-img glitch-slice slice-1" src="assets/image/title-main.png" alt="" />
+            <img class="title-img glitch-slice slice-2" src="assets/image/title-main.png" alt="" />
+            <img class="title-img glitch-slice slice-3" src="assets/image/title-main.png" alt="" />
+          </div>
+
+          <img class="reflection-img" src="assets/image/title-reflection.png" alt="CITY 04 reflection" />
+        </div>
+
+        <button class="start-btn" id="startBtn" type="button">
+          <img class="start-btn-frame" src="assets/image/start-frame.svg" alt="" />
+          <span class="start-btn-text">开始游戏</span>
+        </button>
+      </div>
+
+      <!-- 第二页：Introduction 页 -->
+      <div class="screen screen-introduction hidden" id="screenIntroduction">
+        <img
+          class="intro-page-img"
+          id="introPageImg"
+          src="assets/image/introduction-page.png"
+          alt="Introduction page"
+        />
+
+        <img
+          class="intro-frame-img"
+          id="introFrame"
+          src="assets/image/introduction-frame.png"
+          alt="Introduction frame"
+        />
+
+        <div class="intro-body-text" id="introBodyText"></div>
+
+        <button class="work-btn hidden" id="workBtn" type="button">
+          <img class="work-btn-frame" src="assets/image/outcome-frame.svg" alt="" />
+          <span class="work-btn-text">进入工作</span>
+        </button>
+
+        <div class="intro-dim hidden" id="introDim"></div>
+
+        <!-- 黑色信息面板 -->
+        <div class="message-panel hidden" id="messagePanel">
+          <!-- 面板本体 -->
+          <img
+            class="message-panel-img base"
+            src="assets/image/message-panel.svg"
+            alt="message panel"
+          />
+
+          <!-- 标题区故障层 -->
+          <img
+            class="message-panel-img panel-glitch-zone zone-base"
+            src="assets/image/message-panel.svg"
+            alt=""
+          />
+          <img
+            class="message-panel-img panel-glitch-zone zone-magenta"
+            src="assets/image/message-panel.svg"
+            alt=""
+          />
+          <img
+            class="message-panel-img panel-glitch-zone zone-cyan"
+            src="assets/image/message-panel.svg"
+            alt=""
+          />
+
+          <!-- 局部切片 -->
+          <img
+            class="message-panel-img panel-zone-slice zone-slice-1"
+            src="assets/image/message-panel.svg"
+            alt=""
+          />
+          <img
+            class="message-panel-img panel-zone-slice zone-slice-2"
+            src="assets/image/message-panel.svg"
+            alt=""
+          />
+          <img
+            class="message-panel-img panel-zone-slice zone-slice-3"
+            src="assets/image/message-panel.svg"
+            alt=""
+          />
+
+          <div class="panel-glitch"></div>
+
+          <!-- =========================
+               第一层 + 第二层：主文字区
+               白字 + 同步红绿错位字
+               ========================= -->
+          <div class="panel-text-stage" id="panelTextStage">
+            <div class="typing-stack" id="typingStack">
+              <!-- 第二层：同步红绿错位 -->
+              <div class="text-layer text-red ghost-layer" id="redLayer"></div>
+              <div class="text-layer text-green ghost-layer" id="greenLayer"></div>
+
+              <!-- 第一层：白字主层 -->
+              <div class="text-layer text-white main-layer" id="whiteLayer"></div>
+            </div>
+          </div>
+
+          <!-- =========================
+               第二层后续滚动区
+               用于“同步红绿层”在白字结束后继续上滚
+               仍保留原有 redLayerClone / greenLayerClone id
+               ========================= -->
+          <div class="ghost-scroll-layer" id="ghostScrollLayer">
+            <div class="ghost-scroll-track" id="ghostScrollTrack">
+              <div class="scroll-text scroll-red" id="redLayerClone"></div>
+              <div class="scroll-text scroll-green" id="greenLayerClone"></div>
+            </div>
+          </div>
+
+          <!-- =========================
+               第三层：底部洪流滚动层
+               从底部进入，持续向上，后续可加速
+               保留 clone2 的 id 给你后面 JS 继续用
+               ========================= -->
+          <div class="screen-scroll-layer" id="scrollLayer">
+           <div class="screen-scroll-track" id="scrollTrack">
+             <div class="flood-copy" id="floodCopy1"></div>
+             <div class="flood-copy" id="floodCopy2"></div>
+
+             <div class="flood-text slice-tear-red" id="redTearSlice"></div>
+             <div class="flood-text slice-tear-green" id="greenTearSlice"></div>
+           </div>
+         </div>
+
+        <div class="final-blackout hidden" id="finalBlackout"></div>
+      </div>
+      <div id="rememberScreen" class="remember-screen">
+       <div id="rememberText" class="remember-text">
+         你还记得吗？
+       </div>
+     </div>
+
+     <div id="nameEntryOverlay" class="name-entry-overlay hidden">
+       <div class="name-entry-wrap">
+         <img
+           id="nameFrameImg"
+           class="name-frame-img"
+           src="assets/image/name-frame.svg"
+           alt="name entry frame"
+         />
+
+         <div class="name-entry-label">你的名字</div>
+
+         <div id="nameDisplay" class="name-display"></div>
+
+         <input
+            id="nameInput"
+            class="name-input"
+            type="text"
+            maxlength="12"
+           autocomplete="off"
+           spellcheck="false"
+         />
+       </div>
+     </div>
+
+    </div>
+  </div>
+
+  <script src="assets/click-sound.js"></script>
+  <script src="intro.js"></script>
+</body>
+</html>

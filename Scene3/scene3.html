@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scene3</title>
+  <link rel="stylesheet" href="./scene3.css" />
+</head>
+<body>
+  <audio id="bgmAmbient" src="./assets/sounds/ambient-loop.mp3" loop></audio>
+  <audio id="bgmGlitch" src="./assets/sounds/glitch.mp3" loop></audio>
+
+  <div id="viewport">
+    <div id="stage">
+      <div id="glitchOverlay"></div>
+      
+      <img
+        id="bg"
+        src="./assets/images/scene3-bg.png"
+        alt="Scene3 Background"
+      />
+
+      <div id="coreGlow"></div>
+      <img id="mapFill" src="./assets/images/map-fill.png" alt="Map Fill" />
+      <img id="mapOutline" src="./assets/images/map-outline.png" alt="Map Outline" />
+
+      <div id="mapText">
+        [现自然人口数量已与现有资源的最大供给相匹配。]
+      </div>
+
+      <!-- 右侧面板 -->
+      <div id="memoryPanel">
+        <img
+          id="panelBg"
+          src="./assets/images/collect-progress-panel.png"
+          alt="Collect Progress Panel"
+        />
+
+        <!-- voice -->
+        <div class="memory-block" id="voiceBlock">
+          <div class="progress-track voice-track">
+            <div class="progress-fill" id="voiceProgressFill"></div>
+          </div>
+          <div class="progress-num voice-num" id="voiceProgressNum">0%</div>
+
+          <div class="memory-item voice-item-1"><span class="check"></span></div>
+          <div class="memory-item voice-item-2"><span class="check"></span></div>
+          <div class="memory-item voice-item-3"><span class="check"></span></div>
+        </div>
+
+        <!-- image -->
+        <div class="memory-block" id="imageBlock">
+          <div class="progress-track image-track">
+            <div class="progress-fill" id="imageProgressFill"></div>
+          </div>
+          <div class="progress-num image-num" id="imageProgressNum">0%</div>
+
+          <div class="memory-item image-item-1"><span class="check"></span></div>
+          <div class="memory-item image-item-2"><span class="check"></span></div>
+          <div class="memory-item image-item-3"><span class="check"></span></div>
+        </div>
+
+        <!-- total -->
+        <div class="memory-block" id="totalBlock">
+          <div class="progress-track total-track">
+            <div class="progress-fill" id="totalProgressFill"></div>
+          </div>
+          <div class="progress-num total-num" id="totalProgressNum">0%</div>
+
+          <div class="memory-item total-item-1"><span class="check"></span></div>
+          <div class="memory-item total-item-2"><span class="check"></span></div>
+        </div>
+      </div>
+
+      <!-- 地图点击热区 -->
+      <div id="mapHotspot" class="clickable"></div>
+
+      <!-- 黑色遮罩 + 中间弹框 -->
+      <div id="memoryOverlay">
+        <div id="memoryDialog">
+          <img
+            id="memoryDialogBg"
+            src="./assets/images/memoryDialog frame.png"
+            alt="Dialog Frame"
+          />
+
+          <div id="memoryDialogContent">
+            <div class="memory-line" id="memoryLine1">记忆模块已激活</div>
+            <div class="memory-line" id="memoryLine2">正在重构身份……</div>
+            <div class="memory-line" id="memoryLine3">正在加载个人数据……</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/click-sound.js"></script>
+  <script src="./scene3.js"></script>
+</body>
+</html>

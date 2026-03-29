@@ -1,0 +1,364 @@
+@font-face {
+  font-family: "Noto Sans SC";
+  src: url("../assets/fonts/NotoSansSC-VF.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+html, 
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  overflow: hidden;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-weight: 400;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+body {
+  position: relative;
+}
+
+.bullet-screen {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: #000000;
+  overflow: hidden;
+}
+
+/* 通用文字 */
+.bullet-text {
+  position: absolute;
+  white-space: nowrap;
+  line-height: 1;
+  letter-spacing: 1px;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+/* 主句和后半段右 -> 左 */
+.move-rtl {
+  left: 100vw;
+  animation-name: moveRightToLeft;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+/* 后半段左 -> 右 */
+.move-ltr {
+  left: 0;
+  animation-name: moveLeftToRight;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes moveRightToLeft {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(calc(-100vw - 100%));
+    opacity: 0;
+  }
+}
+
+@keyframes moveLeftToRight {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100vw);
+    opacity: 0;
+  }
+}
+
+/* 底层噪点：也是漂动的，只是更淡更慢 */
+.noise-move-rtl {
+  left: 100vw;
+  animation-name: noiseMoveRightToLeft;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+.noise-move-ltr {
+  left: 0;
+  animation-name: noiseMoveLeftToRight;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes noiseMoveRightToLeft {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.22;
+  }
+  75% {
+    opacity: 0.14;
+  }
+  100% {
+    transform: translateX(calc(-100vw - 100%));
+    opacity: 0;
+  }
+}
+
+@keyframes noiseMoveLeftToRight {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.22;
+  }
+  75% {
+    opacity: 0.14;
+  }
+  100% {
+    transform: translateX(100vw);
+    opacity: 0;
+  }
+}
+
+@keyframes glitch-flicker {
+  0%, 100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  8% {
+    opacity: 0.72;
+    filter: brightness(1.15);
+  }
+  10% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  36% {
+    opacity: 0.82;
+    filter: brightness(1.08);
+  }
+  38% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  62% {
+    opacity: 0.68;
+    filter: brightness(1.22);
+  }
+  64% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+@keyframes glitch-shift {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  12% {
+    transform: translateX(-1px);
+  }
+  14% {
+    transform: translateX(1px);
+  }
+  16% {
+    transform: translateX(0);
+  }
+  48% {
+    transform: translateX(2px);
+  }
+  50% {
+    transform: translateX(-2px);
+  }
+  52% {
+    transform: translateX(0);
+  }
+  78% {
+    transform: translateX(-1px);
+  }
+  80% {
+    transform: translateX(1px);
+  }
+  82% {
+    transform: translateX(0);
+  }
+}
+
+/* ---------- 场景切换：横向撕裂 + 抖动 ---------- */
+
+body.scene-tear-transition {
+  animation: sceneShake 0.09s steps(2, end) infinite;
+  overflow: hidden;
+}
+
+.tear-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.03) 0px,
+      rgba(255,255,255,0.03) 1px,
+      rgba(0,0,0,0) 2px,
+      rgba(0,0,0,0) 6px
+    );
+  mix-blend-mode: screen;
+}
+
+.tear-slice {
+  position: absolute;
+  left: -8%;
+  width: 116%;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(122,0,0,0.18) 0%,
+      rgba(255,255,255,0.08) 48%,
+      rgba(40,74,75,0.18) 100%
+    );
+  opacity: 0.85;
+  animation: tearSliceShift var(--tear-duration) steps(2, end) infinite;
+  animation-delay: var(--tear-delay);
+  filter: blur(0.4px);
+}
+
+.tear-slice::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,0.18),
+      rgba(255,255,255,0.03),
+      rgba(255,255,255,0.18)
+    );
+  opacity: 0.5;
+}
+
+@keyframes tearSliceShift {
+  0% {
+    transform: translateX(0);
+    opacity: 0.25;
+  }
+  20% {
+    transform: translateX(calc(var(--tear-shift) * 0.35));
+    opacity: 0.95;
+  }
+  45% {
+    transform: translateX(var(--tear-shift));
+    opacity: 0.7;
+  }
+  70% {
+    transform: translateX(calc(var(--tear-shift) * -0.45));
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 0.3;
+  }
+}
+
+@keyframes sceneShake {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-3px, 1px); }
+  40%  { transform: translate(3px, -2px); }
+  60%  { transform: translate(-2px, 2px); }
+  80%  { transform: translate(2px, -1px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ---------- 最后一瞬间：闪黑 + 白噪点 ---------- */
+
+.scene-blackout-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  background: #000;
+  pointer-events: none;
+  animation: blackoutFlash 0.22s steps(2, end) forwards;
+}
+
+.scene-noise-flash {
+  position: absolute;
+  inset: 0;
+  opacity: 0.22;
+  background-image:
+    radial-gradient(rgba(255,255,255,0.9) 0.7px, transparent 0.8px),
+    radial-gradient(rgba(255,255,255,0.55) 0.5px, transparent 0.7px);
+  background-size: 7px 7px, 11px 11px;
+  background-position: 0 0, 3px 5px;
+  mix-blend-mode: screen;
+  animation:
+    noiseFlashFlicker 0.08s steps(2, end) infinite,
+    noiseFlashMove 0.12s steps(2, end) infinite;
+}
+
+@keyframes blackoutFlash {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.92;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes noiseFlashFlicker {
+  0% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.28;
+  }
+  100% {
+    opacity: 0.16;
+  }
+}
+
+@keyframes noiseFlashMove {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-6px, 3px);
+  }
+  50% {
+    transform: translate(5px, -4px);
+  }
+  75% {
+    transform: translate(-3px, 5px);
+  }
+  100% {
+    transform: translate(2px, -2px);
+  }
+}

@@ -1,0 +1,613 @@
+@font-face {
+  font-family: "Noto Sans SC";
+  src: url("../../assets/fonts/NotoSansSC-VF.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000000;
+}
+
+body {
+  background: #000000;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+  font-synthesis: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+/* 负责居中显示 */
+.viewport {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* 舞台固定尺寸 */
+.stage {
+  position: absolute;
+  width: 1440px;
+  height: 1024px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  transform-origin: center center;
+  overflow: hidden;
+  background: #000000;
+  backface-visibility: hidden;
+}
+
+/* 背景图铺满舞台 */
+.page-bg {
+  position: absolute;
+  inset: 0;
+  width: 1440px;
+  height: 1024px;
+  object-fit: cover;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+}
+
+/* 三张卡片文字层 */
+.memory-card {
+  position: absolute;
+  width: 245px;
+  height: 220px;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* 三张卡片整体位置 */
+.card1 {
+  left: 137px;
+  top: 515px;
+}
+
+.card2 {
+  left: 575px;
+  top: 515px;
+}
+
+.card3 {
+  left: 1013px;
+  top: 515px;
+}
+
+/* 状态容器 */
+.question-state,
+.diary-state {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* ===== 基础样式：只保留不影响单独定位的内容 ===== */
+
+.question-text {
+  position: absolute;
+  margin: 0;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.92);
+  text-align: center;
+}
+
+.date-entry {
+  position: absolute;
+  width: 170px;
+  height: 52px;
+}
+
+.date-text-wrap {
+  position: absolute;
+  width: 120px;
+  height: 24px;
+  z-index: 2;
+}
+
+.date-input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  text-align: center;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  outline: none;
+  padding: 0;
+}
+.date-input {
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+}
+
+.date-input::placeholder {
+  color: rgba(206, 206, 206, 1);
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-weight: 400;
+  opacity: 1;
+}
+
+.line-svg {
+  position: absolute;
+  display: block;
+}
+
+.card-title {
+  position: absolute;
+  margin: 0;
+  text-align: center;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.diary-text {
+  position: absolute;
+  margin: 0;
+  text-align: left;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.92);
+  white-space: normal;
+}
+
+/* ===== Card 1 单独控制 ===== */
+
+.card1 .question-text {
+  width: 298px;
+  left: 0px;
+  top: -5px;
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+.card1 .date-entry {
+  left: 18px;
+  top: 52px;
+  width: 187.12px;
+  height: 52px;
+}
+
+.card1 .date-text-wrap {
+  top: 14px;
+  left: 69%;
+  transform: translateX(-50%);
+  width: 220px;
+  height: 24px;
+}
+
+.card1 .date-input::placeholder {
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 24px;
+  color: rgba(206,206,206,1);
+}
+
+.card1 .date-input {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.card1 .line1 {
+  left: 21px;
+  width: 220px;
+  bottom: 0px;
+}
+
+.card1 .card-title {
+  width: 187px;
+  left: 54px;
+  top: -63px;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.card1 .diary-line {
+  left: 55px;
+  width: 188px;
+  top: -35px;
+}
+
+.card1 .diary-text {
+  width: 296px;
+  left: 0px;
+  top: -3px;
+  font-size: 16px;
+  line-height: 25px;
+}
+
+/* ===== Card 2 单独控制 ===== */
+
+.card2 .question-text {
+  width: 282px;
+  left: -2px;
+  top: -3px;
+  font-size: 16px;
+  line-height: 19px;
+}
+
+.card2 .date-entry {
+  left: 22px;
+  top: 56px;
+  width: 187.12px;
+  height: 52px;
+}
+
+.card2 .date-text-wrap {
+  top: 14px;
+  left: 66%;
+  transform: translateX(-50%);
+  width: 220px;
+  height: 24px;
+}
+
+.card2 .date-input::placeholder {
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 24px;
+  color: rgba(206,206,206,1);
+}
+
+.card2 .date-input {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.card2 .line2 {
+  left: 16px;
+  width: 220px;
+  bottom: 0px;
+}
+
+.card2 .card-title {
+  width: 187px;
+  left: 54px;
+  top: -63px;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.card2 .diary-line {
+  left: 55px;
+  width: 188px;
+  top: -35px;
+}
+
+.card2 .diary-text {
+  width: 296px;
+  left: -1px;
+  top: -3px;
+  font-size: 16px;
+  line-height: 25px;
+}
+
+/* ===== Card 3 单独控制 ===== */
+
+.card3 .question-text {
+  width: 292px;
+  left: 0px;
+  top: -3px;
+  font-size: 16px;
+  line-height: 19px;
+}
+
+.card3 .date-entry {
+  left: 26px;
+  top: 50px;
+  width: 187.12px;
+  height: 52px;
+}
+
+.card3 .date-text-wrap {
+  top: 16px;
+  left: 65%;
+  transform: translateX(-50%);
+  width: 220px;
+  height: 24px;
+}
+
+.card3 .date-input::placeholder {
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 24px;
+  color: rgba(206,206,206,1);
+}
+
+.card3 .date-input {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.card3 .line3 {
+  left: 14px;
+  width: 220px;
+  bottom: -3px;
+}
+
+.card3 .card-title {
+  width: 187px;
+  left: 54px;
+  top: -63px;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.card3 .diary-line {
+  left: 55px;
+  width: 188px;
+  top: -35px;
+}
+
+.card3 .diary-text {
+  width: 296px;
+  left: -1px;
+  top: -3px;
+  font-size: 16px;
+  line-height: 25px;
+}
+
+.hidden {
+  display: none;
+}
+
+.date-input::placeholder {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+.date-input:focus::placeholder {
+  opacity: 0;
+}
+
+/* ===== 姓名输入框 ===== */
+
+.name-panel {
+  position: absolute;
+  right: 24px;
+  top: 720px;
+  width: 270px;
+  height: 92px;
+}
+
+.name-box-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.name-panel-content {
+  position: absolute;
+  inset: 0;
+}
+
+.name-title {
+  position: absolute;
+  left: 34px;
+  top: 12px;
+  width: 180px;
+  height: 28px;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 28px;
+  color: #A1FCFE;
+  letter-spacing: 0px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.name-subtitle {
+  position: absolute;
+  left: 38px;
+  top: 35px;
+  width: 170px;
+  height: 18px;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 18px;
+  color: #A1FCFE;
+  opacity: 1;
+}
+
+/* 透明输入层：只覆盖在 YOUR NAME 的位置 */
+.name-input {
+  position: absolute;
+  left: 38px;
+  top: 18px;
+  width: 180px;
+  height: 28px;
+
+  border: none;
+  outline: none;
+  background: transparent;
+  box-shadow: none;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  padding: 0;
+  margin: 0;
+
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 28px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+
+  color: transparent;
+  caret-color: #bff8ff;
+}
+
+.name-input::placeholder {
+  color: transparent;
+  opacity: 0;
+}
+
+/* ===== Name confirm glow / flash ===== */
+
+.name-panel.confirmed .name-box-svg {
+  animation: nameBoxFlash 0.45s ease 1, nameBoxGlow 0.9s ease 1 0.45s;
+}
+
+.name-panel.confirmed .name-title {
+  animation: nameTextFlash 0.45s ease 1, nameTextGlow 0.9s ease 1 0.45s;
+}
+
+.name-panel.confirmed .name-subtitle {
+  opacity: 0;
+}
+
+@keyframes nameBoxFlash {
+  0% {
+    filter: brightness(1);
+    opacity: 1;
+  }
+  35% {
+    filter: brightness(2.4) drop-shadow(0 0 10px rgba(191, 248, 255, 0.9));
+    opacity: 1;
+  }
+  100% {
+    filter: brightness(1.2) drop-shadow(0 0 6px rgba(191, 248, 255, 0.45));
+    opacity: 1;
+  }
+}
+
+@keyframes nameBoxGlow {
+  0% {
+    filter: brightness(1.2) drop-shadow(0 0 6px rgba(191, 248, 255, 0.45));
+  }
+  50% {
+    filter: brightness(1.45) drop-shadow(0 0 14px rgba(191, 248, 255, 0.85));
+  }
+  100% {
+    filter: brightness(1.15) drop-shadow(0 0 8px rgba(191, 248, 255, 0.55));
+  }
+}
+
+@keyframes nameTextFlash {
+  0% {
+    color: #bff8ff;
+    text-shadow: none;
+    opacity: 1;
+  }
+  35% {
+    color: #ffffff;
+    text-shadow:
+      0 0 8px rgba(191, 248, 255, 0.95),
+      0 0 18px rgba(191, 248, 255, 0.75);
+    opacity: 1;
+  }
+  100% {
+    color: #d9fcff;
+    text-shadow:
+      0 0 6px rgba(191, 248, 255, 0.65),
+      0 0 12px rgba(191, 248, 255, 0.35);
+    opacity: 1;
+  }
+}
+
+@keyframes nameTextGlow {
+  0% {
+    color: #d9fcff;
+    text-shadow:
+      0 0 6px rgba(191, 248, 255, 0.65),
+      0 0 12px rgba(191, 248, 255, 0.35);
+  }
+  50% {
+    color: #ffffff;
+    text-shadow:
+      0 0 10px rgba(191, 248, 255, 0.95),
+      0 0 22px rgba(191, 248, 255, 0.7);
+  }
+  100% {
+    color: #d9fcff;
+    text-shadow:
+      0 0 6px rgba(191, 248, 255, 0.6),
+      0 0 12px rgba(191, 248, 255, 0.3);
+  }
+}
+
+.name-panel.confirmed {
+  animation: namePanelShake 0.18s linear 2;
+}
+
+@keyframes namePanelShake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-1px);
+  }
+  50% {
+    transform: translateX(1px);
+  }
+  75% {
+    transform: translateX(-1px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* ===== 错误状态 ===== */
+
+.name-panel.error .name-box-svg {
+  filter: brightness(1.2) drop-shadow(0 0 10px rgba(255, 0, 0, 1));
+}
+
+.name-panel.error .name-title {
+  color: #FF0000;
+  text-shadow: 0 0 8px rgba(255, 80, 80, 0.9);
+}
+
+.name-panel.error .name-subtitle {
+  color: #FF0000;
+}
+
+/* 抖动效果 */
+.name-panel.error {
+  animation: errorShake 0.4s linear;
+}
+
+@keyframes errorShake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+  100% { transform: translateX(0); }
+}

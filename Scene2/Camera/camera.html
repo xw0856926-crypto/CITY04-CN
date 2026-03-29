@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Camera</title>
+  <link rel="stylesheet" href="camera.css" />
+</head>
+<body tabindex="0">
+  <div class="stage" id="stage">
+    <!-- 第一张背景 -->
+    <img class="bg bg-1 active" id="bg1" src="./image/camera-bg.png" alt="camera background 1" />
+
+    <!-- 第二张背景 -->
+    <img class="bg bg-2" id="bg2" src="./image/camera-stage2.png" alt="camera background 2" />
+
+    <!-- 第三张背景 -->
+    <img class="bg bg-3" id="bg3" src="./image/whoareyou-bg.png" alt="who are you background" />
+
+    <!-- 第四张背景 -->
+    <img class="bg bg-4" id="bg4" src="./image/memory-bg.png" alt="memory background" />
+
+    <!-- 主摄像头 -->
+    <video id="cameraVideo" class="camera-video stage1-video" autoplay playsinline muted></video>
+
+    <!-- 撕裂视频条 -->
+    <video id="glitchVideo1" class="glitch-video glitch-strip strip-1" autoplay playsinline muted></video>
+    <video id="glitchVideo2" class="glitch-video glitch-strip strip-2" autoplay playsinline muted></video>
+    <video id="glitchVideo3" class="glitch-video glitch-strip strip-3" autoplay playsinline muted></video>
+
+    <!-- 第一阶段透明按钮 -->
+    <button id="cameraTrigger" class="camera-trigger" aria-label="Enable camera"></button>
+
+    <!-- 第二阶段用到的层 -->
+    <div id="videoOverlay" class="video-overlay"></div>
+    <div id="scanLine" class="scan-line"></div>
+    <div id="detectText" class="detect-text"></div>
+    <img id="frameOverlay" class="frame-overlay" src="./image/frame.svg" alt="frame overlay" />
+
+    <!-- 闪屏 / 错误效果 -->
+    <div id="flashOverlay" class="flash-overlay"></div>
+    <div id="errorOverlay" class="error-overlay"></div>
+    <div id="glitchBars" class="glitch-bars"></div>
+
+    <!-- WHO ARE YOU 输入区 -->
+    <div id="whoInputWrap" class="who-input-wrap">
+      <div id="whoInputText" class="who-input-text"></div>
+      <div id="whoCaret" class="who-caret"></div>
+    </div>
+  </div>
+
+  <audio id="bgm" src="./sound/bgm.mp3" loop preload="auto"></audio>
+  <script src="../../assets/click-sound.js"></script>
+  <script src="camera.js"></script>
+</body>
+</html>

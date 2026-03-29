@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reminiscence</title>
+  <link rel="stylesheet" href="./reminiscence.css" />
+</head>
+<body>
+  <div class="viewport">
+    <div class="stage" id="stage">
+      <audio id="bgmAmbient" src="../sound/ambient-loop.mp3" loop preload="auto"></audio>
+      <audio id="bgmGlitch" src="../sound/glitch.mp3" loop preload="auto"></audio>
+      <img
+        src="./image/reminiscence-bg.png"
+        alt="Reminiscence Background"
+        class="page-bg"
+      />
+
+      <div class="overlay">
+        <!-- Card 1 -->
+        <section class="memory-card card1">
+          <div class="question-state">
+            <p class="question-text">
+              你还记得自己上一次晒太阳是什么时候？
+            </p>
+
+            <div class="date-entry">
+              <div class="date-text-wrap">
+                <input
+                 type="text"
+                 class="date-input"
+                 placeholder="点击来输入文字(日期/月份)"
+                 maxlength="5"
+                />
+             </div>
+             <img src="./image/line.svg" class="line-svg line1" />
+           </div>
+          </div>
+
+          <div class="diary-state hidden">
+            <h2 class="card-title">日记</h2>
+            <img src="./image/line.svg" alt="" class="line-svg diary-line" />
+            <p class="diary-text" data-template='xx/xx, 今天是一个阳光明媚的好天气，午后我来到“贝尔特公园”享受难得的阳光，阳光下的世界真的好漂亮。'>
+              xx/xx, 今天是一个阳光明媚的好天气，午后我来到“贝尔特公园”享受难得的阳光，阳光下的世界真的好漂亮。
+          </div>
+        </section>
+
+        <!-- Card 2 -->
+        <section class="memory-card card2">
+          <div class="question-state">
+            <p class="question-text">
+              你还记得自己上一次和小动物一起玩的日子吗？
+            </p>
+
+            <div class="date-entry">
+              <div class="date-text-wrap">
+                <input
+                 type="text"
+                 class="date-input"
+                 placeholder="点击来输入文字(日期/月份)"
+                 maxlength="5"
+                />
+             </div>
+             <img src="./image/line.svg" class="line-svg line2" />
+           </div>
+          </div>
+
+          <div class="diary-state hidden">
+            <h2 class="card-title">日记</h2>
+            <img src="./image/line.svg" alt="" class="line-svg diary-line" />
+            <p class="diary-text" data-template='xx/xx, 今天我带着我的小狗一起在草坪上玩游戏，虽然它沾了满身的泥土，但我们都好开心。'>
+              xx/xx, 今天我带着我的小狗一起在草坪上玩游戏，虽然它沾了满身的泥土，但我们都好开心。
+          </div>
+        </section>
+
+        <!-- Card 3 -->
+        <section class="memory-card card3">
+          <div class="question-state">
+            <p class="question-text">
+              你还记得自己上一次和家人聚餐的日子吗？
+            </p>
+
+           <div class="date-entry">
+              <div class="date-text-wrap">
+                <input
+                 type="text"
+                 class="date-input"
+                 placeholder="点击来输入文字(日期/月份)"
+                 maxlength="5"
+                />
+             </div>
+             <img src="./image/line.svg" class="line-svg line3" />
+           </div>
+          </div>
+
+          <div class="diary-state hidden">
+            <h2 class="card-title">日记</h2>
+            <img src="./image/line.svg" alt="" class="line-svg diary-line" />
+            <p class="diary-text" data-template='xx/xx, 今天难得回家了，和爸爸妈妈一起享受了一顿丰盛的晚餐，像回到小时候一样，真好啊！'>
+              xx/xx, 今天难得回家了，和爸爸妈妈一起享受了一顿丰盛的晚餐，像回到小时候一样，真好啊！
+            </p>
+          </div>
+        </section>
+
+        <!-- 姓名输入框：默认隐藏 -->
+       <section class="name-panel hidden" id="namePanel">
+         <img src="./image/name-frame.svg" alt="" class="name-frame-svg" />
+
+         <div class="name-panel-content">
+           <div class="name-title" id="nameTitle">你的名字</div>
+           <div class="name-subtitle" id="nameSubtitle">点击输入</div>
+
+           <input
+             type="text"
+             id="nameInput"
+             class="name-input"
+             maxlength="20"
+             autocomplete="off"
+           />
+         </div>
+       </section>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="../../assets/click-sound.js"></script>
+  <script src="./reminiscence.js"></script>
+</body>
+</html>

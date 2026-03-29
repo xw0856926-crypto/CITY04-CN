@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  />
+  <title>Cyber-AI Task</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="viewport">
+    <div id="stage" class="stage">
+      <!-- 背景界面图：task / result 通过 JS 切换 -->
+      <img id="screen" class="screen" src="assets/image/task.png" alt="Task UI" />
+
+      <!-- ✅ Option A -->
+      <button id="optA" class="option option--a" type="button" aria-label="Option A: Save Human">
+        <img class="option__frame" src="assets/image/option-a.svg" alt="" />
+        <span class="option__tag">选项 A</span>
+        <span class="option__title">保护人类</span>
+      </button>
+
+      <!-- ✅ Option B -->
+      <button id="optB" class="option option--b" type="button" aria-label="Option B: Save Energy">
+        <img class="option__frame" src="assets/image/option-b.svg" alt="" />
+        <span class="option__tag">选项 B</span>
+        <span class="option__title">保护资源</span>
+      </button>
+
+      <button id="task2Btn" class="option option--task2" type="button">
+        <img class="option__frame" src="assets/image/outcome-frame.svg" alt="" />
+        <span class="option__title">任务二</span>
+      </button>
+
+      <button id="task3Btn" class="option option--task3" type="button" aria-label="Go to Task 3">
+        <img class="option__frame" src="assets/image/outcome-frame.svg" alt="" />
+        <span class="option__title">任务三</span>
+      </button>
+
+      <button id="analyseBtn" class="option option--analyse" type="button" aria-label="Analyse">
+        <img class="option__frame" src="assets/image/outcome-frame.svg" alt="" />
+        <span class="option__title">开始分析</span>
+      </button>
+
+      <!-- 倒计时：叠在 task 图的 00:30 那个位置 -->
+      <div id="timer" class="timer">00:30</div>
+
+      <!-- 5秒警告覆盖层：默认隐藏 -->
+      <img id="warning" class="warning" src="assets/image/timeout.png" alt="Warning" />
+    </div>
+  </div>
+
+  <!-- ✅ Task 音效 -->
+  <audio id="taskAudio" src="assets/audio/538791__damirst__digital-8-sec.wav" preload="auto"></audio>
+  <audio id="resultAudio" src="assets/audio/voice_clue_1.wav" preload="auto"></audio>
+  <audio id="result2Audio" src="assets/audio/voice_clue_2.wav" preload="auto"></audio>
+  <audio id="result3Audio" src="assets/audio/voice_clue_3.wav" preload="auto"></audio>
+
+  <!-- ✅ 第一幕 BGM -->
+  <audio id="bgmAmbient" src="assets/audio/ambient-loop.mp3" preload="auto" loop></audio>
+  <audio id="bgmGlitch" src="assets/audio/glitch.mp3" preload="auto" loop></audio>
+
+  <!-- 一次性音频解锁覆盖层 -->
+  <div id="audioUnlock" class="audio-unlock hidden" role="button" aria-label="Click to enable audio">
+    <div class="unlock-inner">
+      <div class="unlock-title">点击启用音频</div>
+      <div class="unlock-sub">开始体验</div>
+    </div>
+  </div>
+
+  <script src="assets/click-sound.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

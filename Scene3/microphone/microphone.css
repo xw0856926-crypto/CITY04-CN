@@ -1,0 +1,920 @@
+@font-face {
+  font-family: "Noto Sans SC";
+  src: url("../../assets/fonts/NotoSansSC-VF.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000000;
+}
+
+body {
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+#app {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #000000;
+}
+
+#stage-scale {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1440px;
+  height: 1024px;
+  transform-origin: top left;
+}
+
+#stage {
+  position: relative;
+  width: 1440px;
+  height: 1024px;
+  overflow: hidden;
+  background: #000000;
+}
+
+/* 大标题区域 */
+#question {
+  position: absolute;
+  left: 50%;
+  top: 235px;
+  transform: translateX(-50%);
+  width: 1347px;
+  text-align: center;
+}
+
+.question-reveal {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+}
+
+.question-reveal + .question-reveal {
+  margin-top: 24px;
+}
+
+.question-line {
+  color: #ffffff;
+  font-size: 72px;
+  line-height: 1.05;
+  font-weight: 600;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  position: relative;
+  display: inline-block;
+  opacity: 1;
+  clip-path: inset(0 0 0 0);
+  will-change: transform, filter, opacity;
+}
+
+#question.hide-question {
+  opacity: 0 !important;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#question.hide-question .question-line,
+#question.hide-question .question-line::before,
+#question.hide-question .question-line::after {
+  opacity: 0 !important;
+  animation: none !important;
+}
+
+/* 标题动画开始 */
+.question-start .question-reveal:nth-child(1) .question-line {
+  animation:
+    lineReveal 2.4s linear forwards,
+    questionShakeLv1 2.8s steps(1, end) infinite 2.4s;
+}
+
+.question-start .question-reveal:nth-child(2) .question-line {
+  animation:
+    lineReveal 2.4s linear 2.6s forwards,
+    questionShakeLv1 2.8s steps(1, end) infinite 5s;
+}
+
+/* 提示文字 */
+#speakHint {
+  position: absolute;
+  left: 50%;
+  top: 735px;
+  transform: translateX(-50%);
+  color: #f2f2f2;
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: 1px;
+  opacity: 0;
+}
+
+/* 音频结束后出现 */
+.show-speak-ui {
+  animation: fadeInOnly 0.6s ease forwards;
+}
+
+/* 提示文字切换：淡出 */
+.hint-fade-out {
+  animation: hintFadeOut 0.28s ease forwards;
+}
+
+/* 提示文字切换：淡入 */
+.hint-fade-in {
+  animation: hintFadeIn 0.32s ease forwards;
+}
+
+/* 麦克风按钮 */
+#micButton {
+  position: absolute;
+  left: 50%;
+  top: 800px;
+  transform: translateX(-50%);
+  width: 124px;
+  height: 124px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  opacity: 0;
+}
+
+/* 麦克风本体 */
+.mic-ring {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: 50%;
+  background: #8e8e8e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.mic-ring::before {
+  content: "";
+  position: absolute;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: #d9d9d9;
+}
+
+.mic-icon {
+  position: relative;
+  z-index: 4;
+  width: 58px;
+  height: 58px;
+}
+
+/* 初始 hover / active */
+#micButton:hover .mic-ring {
+  transform: scale(1.03);
+}
+
+#micButton:active .mic-ring {
+  transform: scale(0.97);
+}
+
+/* 波纹层：默认隐藏 */
+.mic-ripple {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0.7);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 三层不同大小 */
+.ripple-1 {
+  width: 150px;
+  height: 150px;
+  background: rgba(255, 255, 255, 0.18);
+  z-index: 0;
+}
+
+.ripple-2 {
+  width: 210px;
+  height: 210px;
+  background: rgba(255, 255, 255, 0.11);
+  z-index: 0;
+}
+
+.ripple-3 {
+  width: 280px;
+  height: 280px;
+  background: rgba(255, 255, 255, 0.07);
+  z-index: 0;
+}
+
+/* 正在监听时，三层波纹启动 */
+#micButton.listening .ripple-1 {
+  animation: rippleWave1 1.8s ease-out infinite;
+}
+
+#micButton.listening .ripple-2 {
+  animation: rippleWave2 1.8s ease-out infinite;
+}
+
+#micButton.listening .ripple-3 {
+  animation: rippleWave3 1.8s ease-out infinite;
+}
+
+/* 麦克风本体也轻微呼吸一下 */
+#micButton.listening .mic-ring {
+  animation: micCorePulse 1.8s ease-in-out infinite;
+}
+
+/* 你如果还保留之前的发光，也可以一起保留 */
+#micButton.listening .mic-ring {
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.18);
+}
+
+/* 第一层最先动 */
+@keyframes rippleWave1 {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.72);
+  }
+  12% {
+    opacity: 0.9;
+  }
+  55% {
+    opacity: 0.28;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.18);
+  }
+}
+
+/* 第二层稍晚 */
+@keyframes rippleWave2 {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.78);
+  }
+  22% {
+    opacity: 0;
+  }
+  35% {
+    opacity: 0.75;
+  }
+  68% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.12);
+  }
+}
+
+/* 第三层最晚 */
+@keyframes rippleWave3 {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.82);
+  }
+  38% {
+    opacity: 0;
+  }
+  52% {
+    opacity: 0.55;
+  }
+  78% {
+    opacity: 0.14;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+}
+
+/* 中间麦克风本体轻微呼吸 */
+@keyframes micCorePulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.035);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+#micButton:hover .mic-ring {
+  transform: scale(1.03);
+}
+
+#micButton:active .mic-ring {
+  transform: scale(0.97);
+}
+
+/* 正在监听时的状态 */
+#micButton.listening .mic-ring {
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.35);
+  animation: micPulse 1s ease-in-out infinite;
+}
+
+/* 禁止重复点击时 */
+#micButton.disabled {
+  pointer-events: none;
+}
+
+@keyframes lineReveal {
+  0% {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+  }
+  8% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes fadeInOnly {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes hintFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes hintFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes micPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 整个提问界面作为一个整体，方便最后淡出 */
+#question,
+#speakHint,
+#micButton {
+  transition: opacity 0.9s ease;
+}
+
+.stage-fade-out #question,
+.stage-fade-out #speakHint,
+.stage-fade-out #micButton {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+/* 结尾文字 */
+#endingText {
+  position: absolute;
+  left: 50%;
+  top: 430px;
+  transform: translateX(-50%);
+  width: 900px;
+  text-align: center;
+  opacity: 0;
+}
+
+#endingText.show-ending {
+  animation: endingFadeIn 1.2s ease forwards;
+}
+
+.ending-line {
+  color: #f2f2f2;
+  font-size: 72px;
+  line-height: 1.05;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.ending-line + .ending-line {
+  margin-top: 18px;
+}
+
+@keyframes endingFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 故障层 */
+#glitchFlash {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 20;
+  background: #000000;
+  overflow: hidden;
+}
+
+/* 播放 glitch 时开启 */
+#glitchFlash.play-glitch {
+  opacity: 1;
+  animation: glitchOverlayFlicker 0.95s steps(1, end) forwards;
+}
+
+/* 横向故障条 */
+.glitch-bar {
+  position: absolute;
+  left: -8%;
+  width: 116%;
+  background: rgba(255, 255, 255, 0.9);
+  opacity: 0;
+  transform: translateX(0);
+  mix-blend-mode: screen;
+}
+
+.bar-1 {
+  top: 12%;
+  height: 18px;
+}
+
+.bar-2 {
+  top: 28%;
+  height: 34px;
+}
+
+.bar-3 {
+  top: 47%;
+  height: 14px;
+}
+
+.bar-4 {
+  top: 63%;
+  height: 28px;
+}
+
+.bar-5 {
+  top: 79%;
+  height: 20px;
+}
+
+/* glitch 启动时每条条纹各自动起来 */
+#glitchFlash.play-glitch .bar-1 {
+  animation: glitchBarMove1 0.95s steps(1, end) forwards;
+}
+
+#glitchFlash.play-glitch .bar-2 {
+  animation: glitchBarMove2 0.95s steps(1, end) forwards;
+}
+
+#glitchFlash.play-glitch .bar-3 {
+  animation: glitchBarMove3 0.95s steps(1, end) forwards;
+}
+
+#glitchFlash.play-glitch .bar-4 {
+  animation: glitchBarMove4 0.95s steps(1, end) forwards;
+}
+
+#glitchFlash.play-glitch .bar-5 {
+  animation: glitchBarMove5 0.95s steps(1, end) forwards;
+}
+
+/* 整个舞台轻微抖动，和你前面风格统一 */
+.stage-glitch {
+  animation: stageGlitchShake 0.95s steps(1, end) forwards;
+}
+
+/* 结尾文字在最上层 */
+#endingText {
+  z-index: 30;
+}
+
+/* 黑底 + 白闪 + 断续闪烁 */
+@keyframes glitchOverlayFlicker {
+  0%   { opacity: 0; background: #000000; }
+  8%   { opacity: 1; background: #000000; }
+  11%  { opacity: 1; background: rgba(255,255,255,0.95); }
+  15%  { opacity: 1; background: #000000; }
+  23%  { opacity: 1; background: #000000; }
+  27%  { opacity: 1; background: rgba(255,255,255,0.82); }
+  31%  { opacity: 1; background: #000000; }
+  44%  { opacity: 1; background: #000000; }
+  49%  { opacity: 1; background: rgba(255,255,255,0.68); }
+  54%  { opacity: 1; background: #000000; }
+  70%  { opacity: 1; background: #000000; }
+  74%  { opacity: 1; background: rgba(255,255,255,0.55); }
+  79%  { opacity: 1; background: #000000; }
+  100% { opacity: 0; background: #000000; }
+}
+
+/* 横条分别在不同时间闪/位移 */
+@keyframes glitchBarMove1 {
+  0%, 100% { opacity: 0; transform: translateX(0); }
+  10% { opacity: 0.95; transform: translateX(-10px); }
+  13% { opacity: 0; transform: translateX(18px); }
+  48% { opacity: 0.8; transform: translateX(-22px); }
+  52% { opacity: 0; transform: translateX(0); }
+}
+
+@keyframes glitchBarMove2 {
+  0%, 100% { opacity: 0; transform: translateX(0); }
+  18% { opacity: 0.9; transform: translateX(24px); }
+  22% { opacity: 0; transform: translateX(-12px); }
+  58% { opacity: 0.75; transform: translateX(30px); }
+  63% { opacity: 0; transform: translateX(0); }
+}
+
+@keyframes glitchBarMove3 {
+  0%, 100% { opacity: 0; transform: translateX(0); }
+  26% { opacity: 1; transform: translateX(-28px); }
+  30% { opacity: 0; transform: translateX(10px); }
+  72% { opacity: 0.7; transform: translateX(-18px); }
+  76% { opacity: 0; transform: translateX(0); }
+}
+
+@keyframes glitchBarMove4 {
+  0%, 100% { opacity: 0; transform: translateX(0); }
+  36% { opacity: 0.92; transform: translateX(18px); }
+  40% { opacity: 0; transform: translateX(-30px); }
+  82% { opacity: 0.62; transform: translateX(16px); }
+  86% { opacity: 0; transform: translateX(0); }
+}
+
+@keyframes glitchBarMove5 {
+  0%, 100% { opacity: 0; transform: translateX(0); }
+  14% { opacity: 0.65; transform: translateX(-16px); }
+  17% { opacity: 0; transform: translateX(12px); }
+  66% { opacity: 0.88; transform: translateX(22px); }
+  71% { opacity: 0; transform: translateX(0); }
+}
+
+/* 整体轻微抖动 */
+@keyframes stageGlitchShake {
+  0%   { transform: translate(0, 0); }
+  10%  { transform: translate(-6px, 0); }
+  16%  { transform: translate(7px, 0); }
+  24%  { transform: translate(-10px, 0); }
+  31%  { transform: translate(5px, 0); }
+  39%  { transform: translate(-3px, 0); }
+  48%  { transform: translate(8px, 0); }
+  57%  { transform: translate(-6px, 0); }
+  68%  { transform: translate(4px, 0); }
+  78%  { transform: translate(-2px, 0); }
+  100% { transform: translate(0, 0); }
+}
+
+/* 结尾欢迎文字 */
+#endingText {
+  position: absolute;
+  left: 50%;
+  top: 430px;
+  transform: translateX(-50%);
+  width: 900px;
+  text-align: center;
+  opacity: 0;
+  z-index: 30;
+}
+
+#endingText.show-ending {
+  animation: endingFadeIn 1.2s ease forwards;
+}
+
+#endingText.hide-ending {
+  animation: endingFadeOut 0.7s ease forwards;
+}
+
+.ending-line {
+  color: #f2f2f2;
+  font-size: 72px;
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.ending-line + .ending-line {
+  margin-top: 18px;
+}
+
+@keyframes endingFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes endingFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* 系统报告滚动区 */
+#reportRoll {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 35;
+}
+
+#reportRoll.show-report {
+  opacity: 1;
+}
+
+#reportContent {
+  position: absolute;
+  left: 50%;
+  width: 900px;
+  transform: translateX(-50%);
+  bottom: -520px;
+  text-align: center;
+  color: #f2f2f2;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;;
+  font-size: 36px;
+  line-height: 1.8;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+#reportRoll.roll-up #reportContent {
+  animation: reportScrollUp 18s linear forwards;
+}
+
+#reportContent p {
+  margin: 0;
+}
+
+@keyframes reportScrollUp {
+  0% {
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    transform: translateX(-50%) translateY(-1900px);
+  }
+}
+
+/* question 整体基础过渡 */
+#question {
+  transition: opacity 0.3s ease, filter 0.25s ease, transform 0.2s ease;
+  transform-origin: center center;
+}
+
+/* 每一行标题都允许做 glitch 偏移 */
+.question-line {
+  position: relative;
+  display: inline-block;
+  will-change: transform, filter, opacity;
+}
+
+/* ------------- 第1轮：轻微压迫 ------------- */
+#question.question-level-1 {
+  animation: questionPulseLv1 2.4s ease-in-out infinite;
+}
+
+#question.question-level-1 .question-line {
+  animation: questionShakeLv1 2.8s steps(1, end) infinite;
+}
+
+/* ------------- 第2轮：开始不稳定 ------------- */
+#question.question-level-2 {
+  animation: questionPulseLv2 1.7s ease-in-out infinite;
+}
+
+#question.question-level-2 .question-line {
+  animation: questionShakeLv2 1.2s steps(1, end) infinite;
+}
+
+#question.question-level-2 .question-line::before,
+#question.question-level-2 .question-line::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+
+#question.question-level-2 .question-line::before {
+  color: rgba(255, 255, 255, 0.85);
+  animation: questionGhostBeforeLv2 1.4s steps(1, end) infinite;
+}
+
+#question.question-level-2 .question-line::after {
+  color: rgba(255, 255, 255, 0.55);
+  animation: questionGhostAfterLv2 1.1s steps(1, end) infinite;
+}
+
+/* ------------- 第3轮：逼迫感明显 ------------- */
+#question.question-level-3 {
+  animation: questionPulseLv3 1s ease-in-out infinite;
+  filter: contrast(1.08);
+}
+
+#question.question-level-3 .question-line {
+  animation: questionShakeLv3 0.75s steps(1, end) infinite;
+}
+
+#question.question-level-3 .question-line::before,
+#question.question-level-3 .question-line::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+#question.question-level-3 .question-line::before {
+  color: rgba(255, 255, 255, 0.9);
+  animation: questionGhostBeforeLv3 0.8s steps(1, end) infinite;
+}
+
+#question.question-level-3 .question-line::after {
+  color: rgba(255, 255, 255, 0.55);
+  animation: questionGhostAfterLv3 0.65s steps(1, end) infinite;
+}
+
+/* ------------------ keyframes ------------------ */
+
+/* Lv1 */
+@keyframes questionPulseLv1 {
+  0%, 100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 0.94;
+    filter: brightness(1.04);
+  }
+}
+
+@keyframes questionShakeLv1 {
+  0%, 100% { transform: translate(0, 0); }
+  18% { transform: translate(-1px, 0); }
+  22% { transform: translate(1px, 0); }
+  58% { transform: translate(0, 0); }
+  61% { transform: translate(-1px, 0); }
+  66% { transform: translate(0, 0); }
+}
+
+/* Lv2 */
+@keyframes questionPulseLv2 {
+  0%, 100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  20% {
+    opacity: 0.95;
+    filter: brightness(1.08);
+  }
+  22% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  63% {
+    opacity: 0.9;
+    filter: brightness(1.12);
+  }
+  66% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+@keyframes questionShakeLv2 {
+  0%, 100% { transform: translate(0, 0); }
+  12% { transform: translate(-3px, 0); }
+  18% { transform: translate(3px, 0); }
+  31% { transform: translate(-2px, 0); }
+  35% { transform: translate(0, 0); }
+  71% { transform: translate(4px, 0); }
+  76% { transform: translate(-2px, 0); }
+  80% { transform: translate(0, 0); }
+}
+
+@keyframes questionGhostBeforeLv2 {
+  0%, 100% { opacity: 0; transform: translate(0, 0); }
+  16% { opacity: 0.75; transform: translate(-6px, 0); }
+  20% { opacity: 0; transform: translate(0, 0); }
+  68% { opacity: 0.55; transform: translate(5px, 0); }
+  72% { opacity: 0; transform: translate(0, 0); }
+}
+
+@keyframes questionGhostAfterLv2 {
+  0%, 100% { opacity: 0; transform: translate(0, 0); }
+  28% { opacity: 0.45; transform: translate(7px, 0); }
+  32% { opacity: 0; transform: translate(0, 0); }
+  78% { opacity: 0.35; transform: translate(-4px, 0); }
+  83% { opacity: 0; transform: translate(0, 0); }
+}
+
+/* Lv3 */
+@keyframes questionPulseLv3 {
+  0%, 100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  14% {
+    opacity: 0.86;
+    filter: brightness(1.18);
+  }
+  18% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  48% {
+    opacity: 0.8;
+    filter: brightness(1.22);
+  }
+  53% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  82% {
+    opacity: 0.9;
+    filter: brightness(1.15);
+  }
+}
+
+@keyframes questionShakeLv3 {
+  0%, 100% { transform: translate(0, 0); }
+  8%  { transform: translate(-6px, 0); }
+  12% { transform: translate(7px, 0); }
+  18% { transform: translate(-4px, 0); }
+  23% { transform: translate(0, 0); }
+  44% { transform: translate(9px, 0); }
+  49% { transform: translate(-7px, 0); }
+  55% { transform: translate(2px, 0); }
+  60% { transform: translate(0, 0); }
+  78% { transform: translate(-5px, 0); }
+  83% { transform: translate(6px, 0); }
+  88% { transform: translate(0, 0); }
+}
+
+@keyframes questionGhostBeforeLv3 {
+  0%, 100% { opacity: 0; transform: translate(0, 0); }
+  10% { opacity: 0.95; transform: translate(-14px, 0); }
+  15% { opacity: 0; transform: translate(0, 0); }
+  34% { opacity: 0.85; transform: translate(11px, 0); }
+  39% { opacity: 0; transform: translate(0, 0); }
+  71% { opacity: 0.72; transform: translate(-8px, 0); }
+  76% { opacity: 0; transform: translate(0, 0); }
+}
+
+@keyframes questionGhostAfterLv3 {
+  0%, 100% { opacity: 0; transform: translate(0, 0); }
+  18% { opacity: 0.58; transform: translate(12px, 0); }
+  22% { opacity: 0; transform: translate(0, 0); }
+  52% { opacity: 0.46; transform: translate(-10px, 0); }
+  57% { opacity: 0; transform: translate(0, 0); }
+  86% { opacity: 0.42; transform: translate(8px, 0); }
+  90% { opacity: 0; transform: translate(0, 0); }
+}

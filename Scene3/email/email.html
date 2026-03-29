@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Email Scene</title>
+  <link rel="stylesheet" href="./email.css" />
+</head>
+<body>
+  <audio id="bgmAmbient" src="../assets/sounds/ambient-loop.mp3" loop></audio>
+  <audio id="bgmGlitch" src="./sounds/glitch.mp3" loop></audio>
+
+  <div class="stage" id="stage"></div>
+    <div class="email-panel" id="emailPanel">
+      <img
+        class="email-bg"
+        src="./assets/images/email-bg.png"
+        alt="Email Background"
+      />
+
+      <!-- 文字层 -->
+      <div class="email-text" id="emailText">
+        <p class="text-line delay-1">你好 <span id="playerNameSlot">XXX</span>,</p>
+
+        <p class="text-line delay-2">我们明白目前</p>
+        <p class="text-line delay-3">你正在面对的压力。</p>
+
+        <p class="text-line delay-4">我们的项目可以带来：</p>
+        <p class="text-line delay-5">—— 缓解情绪压力</p>
+        <p class="text-line delay-6">—— 稳定的生活条件</p>
+        <p class="text-line delay-7">—— 长期的安全性</p>
+
+        <p class="text-line delay-8">许多参与者表示</p>
+        <p class="text-line delay-9">参与后生活质量有显著提升。</p>
+
+        <p class="text-line delay-10">当然，这完全免费的项目。</p>
+      </div>
+
+      <!-- 按钮 -->
+      <div class="btn-group" id="btnGroup">
+        <button class="mail-btn accept-btn">接受</button>
+        <button class="mail-btn reject-btn">拒绝</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="flashOverlay" class="flash-overlay"></div>
+  <div id="blackOverlay" class="black-overlay"></div>
+  <script src="../../assets/click-sound.js"></script>
+  <script src="./email.js"></script>
+</body>
+</html>
