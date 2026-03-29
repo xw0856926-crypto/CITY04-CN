@@ -10,7 +10,7 @@ const task2Btn = document.getElementById("task2Btn");
 const task3Btn = document.getElementById("task3Btn");
 const analyseBtn = document.getElementById("analyseBtn");
 
-// ✅ 新增：固定舞台缩放
+// ✅ 固定舞台缩放
 const viewportEl = document.getElementById("viewport");
 const stageEl = document.getElementById("stage");
 const STAGE_WIDTH = 1440;
@@ -23,7 +23,7 @@ const result2Audio = document.getElementById("result2Audio");
 const result3Audio = document.getElementById("result3Audio");
 const audioUnlock = document.getElementById("audioUnlock");
 
-// ✅ 新增：第一幕 BGM
+// ✅ 第一幕 BGM
 const bgmAmbient = document.getElementById("bgmAmbient");
 const bgmGlitch = document.getElementById("bgmGlitch");
 
@@ -36,7 +36,76 @@ let activeTaskTicks = [];
 let taskBgmStarted = false;
 let ambientFadeInterval = null;
 
-// ✅ 新增：让舞台始终按 1440 × 1024 等比缩放并居中
+/* =========================
+   音频稳定播放处理
+   ========================= */
+const allAudios = [
+  taskAudio,
+  resultAudio,
+  result2Audio,
+  result3Audio,
+  bgmAmbient,
+  bgmGlitch
+].filter(Boolean);
+
+let audioUnlocked = false;
+
+async function safePlay(audio) {
+  if (!audio) return false;
+
+  try {
+    await audio.play();
+    return true;
+  } catch (err) {
+    console.log(`Audio play failed: ${audio.id}`, err);
+    return false;
+  }
+}
+
+async function unlockAllAudio() {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+
+  for (const audio of allAudios) {
+    try {
+      const originalMuted = audio.muted;
+      const originalVolume = audio.volume;
+
+      audio.muted = true;
+      audio.volume = 0;
+      audio.currentTime = 0;
+
+      await audio.play();
+      audio.pause();
+      audio.currentTime = 0;
+
+      audio.muted = originalMuted;
+      audio.volume = originalVolume;
+    } catch (err) {
+      console.log(`Audio unlock failed: ${audio.id}`, err);
+    }
+  }
+}
+
+window.addEventListener(
+  "pointerdown",
+  () => {
+    unlockAllAudio();
+  },
+  { once: true }
+);
+
+window.addEventListener(
+  "touchend",
+  () => {
+    unlockAllAudio();
+  },
+  { once: true }
+);
+
+/* =========================
+   舞台缩放
+   ========================= */
 function fitStage() {
   if (!stageEl) return;
 
@@ -50,7 +119,6 @@ function fitStage() {
   stageEl.style.transformOrigin = "center center";
 }
 
-// ✅ 新增：更稳一点，处理某些移动端/检查元素变化
 function requestFitStage() {
   window.requestAnimationFrame(() => {
     fitStage();
@@ -118,9 +186,9 @@ function fadeInAudio(audio, targetVolume = 0.5, duration = 4000) {
 
 // 原有任务音效
 function getTaskTickInterval() {
-  if (remaining > 10) return 1000;  // ✅ 前20秒都稳定
-  if (remaining > 5) return 700;    // ✅ 10秒才开始加快
-  return 220;                       // ✅ 最后5秒爆发
+  if (remaining > 10) return 1000;
+  if (remaining > 5) return 700;
+  return 220;
 }
 
 function playTaskTick() {
@@ -134,12 +202,12 @@ function playTaskTick() {
 
   tick.volume = volume;
   tick.currentTime = 0;
+  tick.playsInline = true;
 
-  // 记录当前正在播放的 tick
   activeTaskTicks.push(tick);
 
   const cleanup = () => {
-    activeTaskTicks = activeTaskTicks.filter(audio => audio !== tick);
+    activeTaskTicks = activeTaskTicks.filter((audio) => audio !== tick);
   };
 
   tick.addEventListener("ended", cleanup);
@@ -191,8 +259,7 @@ function stopTaskAudio() {
     taskTickTimeoutId = null;
   }
 
-  // 停掉所有已经触发、还在播放的 tick
-  activeTaskTicks.forEach(tick => {
+  activeTaskTicks.forEach((tick) => {
     try {
       tick.pause();
       tick.currentTime = 0;
@@ -206,11 +273,18 @@ function smoothVolume(audio, target, duration = 300) {
   if (!audio) return;
 
   const step = 0.01;
-  const interval = duration / Math.abs(audio.volume - target) / (1 / step);
+  const diff = Math.abs(audio.volume - target);
+
+  if (diff < 0.01) {
+    audio.volume = target;
+    return;
+  }
+
+  const interval = Math.max(16, duration / (diff / step));
 
   const fade = setInterval(() => {
     if (Math.abs(audio.volume - target) > 0.01) {
-      audio.volume += (audio.volume < target ? step : -step);
+      audio.volume += audio.volume < target ? step : -step;
     } else {
       audio.volume = target;
       clearInterval(fade);
@@ -242,29 +316,32 @@ function saveBgmState() {
   }
 }
 
-// ✅ 新增：第一幕 BGM 启动
+// ✅ 第一幕 BGM 启动
 async function startTaskBgm() {
   if (taskBgmStarted) return;
 
-  const playJobs = [];
+  let ambientStarted = false;
+  let glitchStarted = false;
 
   if (bgmAmbient) {
     bgmAmbient.loop = true;
     bgmAmbient.currentTime = 3;
     bgmAmbient.volume = 0;
-    playJobs.push(bgmAmbient.play());
+    ambientStarted = await safePlay(bgmAmbient);
   }
 
   if (bgmGlitch) {
     bgmGlitch.loop = true;
     bgmGlitch.currentTime = 0;
-    bgmGlitch.volume = 0.15; // 很小声，避免乱
-    playJobs.push(bgmGlitch.play());
+    bgmGlitch.volume = 0.15;
+    glitchStarted = await safePlay(bgmGlitch);
   }
 
-  await Promise.all(playJobs);
+  // 只要有一个没成功，就当作没解锁成功，抛错给外层 catch
+  if (!ambientStarted || !glitchStarted) {
+    throw new Error("BGM autoplay blocked");
+  }
 
-  // ambient 淡入到主层音量
   if (bgmAmbient) {
     fadeInAudio(bgmAmbient, 0.45, 1200);
   }
@@ -279,9 +356,7 @@ function playResultAudio() {
   resultAudio.currentTime = 0;
   resultAudio.volume = 0.6;
 
-  resultAudio.play().catch(() => {
-    console.log("Result audio autoplay blocked.");
-  });
+  safePlay(resultAudio);
 }
 
 function playResult2Audio() {
@@ -295,9 +370,8 @@ function playResult2Audio() {
   result2Audio.volume = 0.6;
   result2Audio.currentTime = 0;
 
-  return result2Audio.play().catch((e) => {
-    console.warn("Result2 audio play() failed:", e);
-    throw e;
+  return safePlay(result2Audio).then((ok) => {
+    if (!ok) throw new Error("Result2 audio blocked");
   });
 }
 
@@ -312,9 +386,8 @@ function playResult3Audio() {
   result3Audio.volume = 0.6;
   result3Audio.currentTime = 0;
 
-  return result3Audio.play().catch((e) => {
-    console.warn("Result3 audio play() failed:", e);
-    throw e;
+  return safePlay(result3Audio).then((ok) => {
+    if (!ok) throw new Error("Result3 audio blocked");
   });
 }
 
@@ -328,7 +401,6 @@ function goToResult() {
   if (currentStage === "task") {
     currentStage = "result";
 
-    // ✅ 关键：立刻停止这一轮倒计时
     if (timerId) {
       clearInterval(timerId);
       timerId = null;
@@ -415,7 +487,6 @@ function startCountdown(seconds) {
   setDanger(false);
   setWarning(false);
 
-  // ✅ 同时启动原任务音效 + 第一幕 BGM
   Promise.all([
     startTaskAudio(),
     startTaskBgm()
@@ -433,24 +504,20 @@ function startCountdown(seconds) {
     remaining -= 1;
     timerEl.textContent = formatTime(remaining);
 
-    // 10秒开始变红
     if (remaining <= 10 && remaining > 5) {
       setDanger(true);
       setWarning(false);
     }
 
-    // 5秒开始出现警告
     if (remaining <= 5 && remaining > 0) {
       setDanger(true);
       setWarning(true);
 
-      // ✅ 最后5秒让 glitch 稍微抬一点点，但仍然很轻
       if (bgmGlitch) {
         bgmGlitch.volume = 0.2;
       }
     }
 
-    // 时间到
     if (remaining <= 0) {
       clearInterval(timerId);
       timerId = null;
@@ -497,6 +564,7 @@ function goToTask3() {
 if (audioUnlock) {
   audioUnlock.addEventListener("click", async () => {
     try {
+      await unlockAllAudio();
       await Promise.all([
         startTaskAudio(),
         startTaskBgm()
@@ -515,7 +583,6 @@ if (audioUnlock) {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  // ✅ 先适配舞台
   fitStage();
   requestFitStage();
   setTimeout(requestFitStage, 60);
@@ -523,7 +590,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
   setWarning(false);
 
-  // ✅ Option A/B：点击进入 goToResult
   if (optA) {
     optA.addEventListener("click", () => {
       hideWarningImmediately();
@@ -538,7 +604,6 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ✅ Task2 / Task3
   if (task2Btn) {
     task2Btn.onclick = null;
     task2Btn.addEventListener("click", goToTask2);
@@ -559,10 +624,8 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ✅ 只在 task 阶段启动倒计时
   if (currentStage === "task") startCountdown(30);
 
-  // ✅ result 音频播完 → outcome1
   if (resultAudio) {
     resultAudio.onended = null;
     resultAudio.addEventListener("ended", () => {
@@ -581,7 +644,6 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ✅ result2 音频播完 → outcome2
   if (result2Audio) {
     result2Audio.onended = () => {
       if (currentStage !== "result2") return;
@@ -599,7 +661,6 @@ window.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-  // ✅ result3 音频播完 → outcome3
   if (result3Audio) {
     result3Audio.onended = () => {
       if (currentStage !== "result3") return;
@@ -618,7 +679,6 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// ✅ 新增：窗口尺寸变化时重新适配舞台
 window.addEventListener("resize", requestFitStage);
 window.addEventListener("orientationchange", requestFitStage);
 

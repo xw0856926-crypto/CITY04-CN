@@ -2,23 +2,68 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
   <title>CITY 04</title>
   <link rel="stylesheet" href="intro.css" />
 </head>
 
 <body>
   <!-- 音频 -->
-  <audio id="startBgm" src="assets/audio/start.mp3" preload="auto"></audio>
-  <audio id="glitchSfx" src="assets/audio/electric-sparks.mp3" preload="auto"></audio>
-  <audio id="introBgm" src="assets/audio/introduction-atmosphere.mp3" preload="auto"></audio>
-  <audio id="panelSfx" src="assets/audio/electric-words.mp3" preload="auto"></audio>
-  <audio id="disorderBgm" src="assets/audio/disorder.mp3" preload="auto"></audio>
-  <audio id="wrongSfx" src="assets/audio/wrong.mp3" preload="auto"></audio>
-  <audio id="correctSfx" src="assets/audio/correct.mp3" preload="auto"></audio>
+  <audio
+    id="startBgm"
+    src="assets/audio/start.mp3"
+    preload="auto"
+    playsinline
+    webkit-playsinline="true"
+  ></audio>
+  <audio
+    id="glitchSfx"
+    src="assets/audio/electric-sparks.mp3"
+    preload="auto"
+    playsinline
+    webkit-playsinline="true"
+  ></audio>
+  <audio
+    id="introBgm"
+    src="assets/audio/introduction-atmosphere.mp3"
+    preload="auto"
+    playsinline
+    webkit-playsinline="true"
+  ></audio>
+  <audio
+    id="panelSfx"
+    src="assets/audio/electric-words.mp3"
+    preload="auto"
+    playsinline
+    webkit-playsinline="true"
+  ></audio>
+  <audio
+    id="disorderBgm"
+    src="assets/audio/disorder.mp3"
+    preload="auto"
+    playsinline
+    webkit-playsinline="true"
+  ></audio>
+  <audio
+    id="wrongSfx"
+    src="assets/audio/wrong.mp3"
+    preload="auto"
+    playsinline
+    webkit-playsinline="true"
+  ></audio>
+  <audio
+    id="correctSfx"
+    src="assets/audio/correct.mp3"
+    preload="auto"
+    playsinline
+    webkit-playsinline="true"
+  ></audio>
 
-  <div class="stage-shell">
-    <div class="stage">
+  <div class="stage-shell" id="viewport">
+    <div class="stage" id="stage">
 
       <!-- 开场遮罩：上下分裂 -->
       <div class="curtain-overlay" id="curtainOverlay">
@@ -27,8 +72,8 @@
 
         <div class="curtain-center" id="curtainCenter">
           <div class="curtain-hint">CLICK TO ENTER</div>
-       </div>
-     </div>
+        </div>
+      </div>
 
       <!-- 第一页：开场页 -->
       <div class="screen screen-intro intro-waiting" id="screenIntro">
@@ -155,46 +200,48 @@
                保留 clone2 的 id 给你后面 JS 继续用
                ========================= -->
           <div class="screen-scroll-layer" id="scrollLayer">
-           <div class="screen-scroll-track" id="scrollTrack">
-             <div class="flood-copy" id="floodCopy1"></div>
-             <div class="flood-copy" id="floodCopy2"></div>
+            <div class="screen-scroll-track" id="scrollTrack">
+              <div class="flood-copy" id="floodCopy1"></div>
+              <div class="flood-copy" id="floodCopy2"></div>
 
-             <div class="flood-text slice-tear-red" id="redTearSlice"></div>
-             <div class="flood-text slice-tear-green" id="greenTearSlice"></div>
-           </div>
-         </div>
+              <div class="flood-text slice-tear-red" id="redTearSlice"></div>
+              <div class="flood-text slice-tear-green" id="greenTearSlice"></div>
+            </div>
+          </div>
+        </div>
 
         <div class="final-blackout hidden" id="finalBlackout"></div>
       </div>
+
       <div id="rememberScreen" class="remember-screen">
-       <div id="rememberText" class="remember-text">
-         你还记得吗？
-       </div>
-     </div>
+        <div id="rememberText" class="remember-text">
+          你还记得吗？
+        </div>
+      </div>
 
-     <div id="nameEntryOverlay" class="name-entry-overlay hidden">
-       <div class="name-entry-wrap">
-         <img
-           id="nameFrameImg"
-           class="name-frame-img"
-           src="assets/image/name-frame.svg"
-           alt="name entry frame"
-         />
+      <div id="nameEntryOverlay" class="name-entry-overlay hidden">
+        <div class="name-entry-wrap">
+          <img
+            id="nameFrameImg"
+            class="name-frame-img"
+            src="assets/image/name-frame.svg"
+            alt="name entry frame"
+          />
 
-         <div class="name-entry-label">你的名字</div>
+          <div class="name-entry-label">你的名字</div>
 
-         <div id="nameDisplay" class="name-display"></div>
+          <div id="nameDisplay" class="name-display"></div>
 
-         <input
+          <input
             id="nameInput"
             class="name-input"
             type="text"
             maxlength="12"
-           autocomplete="off"
-           spellcheck="false"
-         />
-       </div>
-     </div>
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </div>
+      </div>
 
     </div>
   </div>

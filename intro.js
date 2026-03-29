@@ -50,12 +50,21 @@ const finalBlackout = document.getElementById("finalBlackout");
 
 const nameEntryWrap = document.querySelector(".name-entry-wrap");
 
+const rememberScreen = document.getElementById("rememberScreen");
+const rememberText = document.getElementById("rememberText");
+
+/* =========================
+   平板尺寸适配
+   ========================= */
 function fitStage() {
   const stageWidth = 1440;
   const stageHeight = 1024;
 
-  const scaleX = window.innerWidth / stageWidth;
-  const scaleY = window.innerHeight / stageHeight;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  const scaleX = vw / stageWidth;
+  const scaleY = vh / stageHeight;
 
   const scale = Math.min(scaleX, scaleY);
 
@@ -63,17 +72,85 @@ function fitStage() {
 }
 
 window.addEventListener("resize", fitStage);
+window.addEventListener("orientationchange", fitStage);
 window.addEventListener("load", fitStage);
+
+if (window.visualViewport) {
+  window.visualViewport.addEventListener("resize", fitStage);
+}
+
+/* =========================
+   音频稳定播放处理
+   ========================= */
+const allAudios = [
+  startBgm,
+  glitchSfx,
+  introBgm,
+  panelSfx,
+  disorderBgm,
+  wrongSfx,
+  correctSfx
+];
+
+let audioUnlocked = false;
+
+async function safePlay(audio) {
+  if (!audio) return false;
+
+  try {
+    await audio.play();
+    return true;
+  } catch (err) {
+    console.log(`Audio play failed: ${audio.id}`, err);
+    return false;
+  }
+}
+
+async function unlockAllAudio() {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+
+  for (const audio of allAudios) {
+    try {
+      const originalMuted = audio.muted;
+      const originalVolume = audio.volume;
+
+      audio.muted = true;
+      audio.volume = 0;
+      audio.currentTime = 0;
+
+      await audio.play();
+      audio.pause();
+      audio.currentTime = 0;
+
+      audio.muted = originalMuted;
+      audio.volume = originalVolume;
+    } catch (err) {
+      console.log(`Audio unlock failed: ${audio.id}`, err);
+    }
+  }
+}
+
+window.addEventListener(
+  "pointerdown",
+  () => {
+    unlockAllAudio();
+  },
+  { once: true }
+);
+
+window.addEventListener(
+  "touchend",
+  () => {
+    unlockAllAudio();
+  },
+  { once: true }
+);
 
 function fadeInAudio(audio, target = 0.6, step = 0.04, interval = 80) {
   audio.volume = 0;
 
-  const playPromise = audio.play();
-  if (playPromise !== undefined) {
-    playPromise.catch((err) => {
-      console.log("Audio play failed:", err);
-    });
-  }
+  safePlay(audio);
 
   const timer = setInterval(() => {
     if (audio.volume < target) {
@@ -87,6 +164,8 @@ function fadeInAudio(audio, target = 0.6, step = 0.04, interval = 80) {
 function openCurtain() {
   if (hasEnteredIntro) return;
   hasEnteredIntro = true;
+
+  unlockAllAudio();
 
   // 先让首页动画正式开始
   screenIntro.classList.remove("intro-waiting");
@@ -102,15 +181,13 @@ function openCurtain() {
   fadeInAudio(startBgm, 0.6, 0.05, 80);
 
   // 此刻开始电流音
-    glitchSfx.volume = 0.3;
+  glitchSfx.volume = 0.3;
   glitchSfx.loop = true;
   glitchSfx.currentTime = 0;
 
   // 等标题升起后、切片故障开始时再播
   glitchSfxTimer = setTimeout(() => {
-    glitchSfx.play().catch(() => {
-      console.log("Glitch SFX play failed.");
-    });
+    safePlay(glitchSfx);
   }, 2500);
 
   setTimeout(() => {
@@ -198,15 +275,15 @@ function playPanelAudioSequence() {
   disorderBgm.volume = 0.55;
 
   // 播放单次 panel 音效
-  panelSfx.play().catch(() => {});
+  safePlay(panelSfx);
 
   // panel 音效播完后，接 disorder
   panelSfx.onended = () => {
-   disorderBgm.play().catch(() => {});
+    safePlay(disorderBgm);
 
-   // 👇 开始监听淡出
-   monitorDisorderFadeOut();
- };
+    // 👇 开始监听淡出
+    monitorDisorderFadeOut();
+  };
 }
 
 function stopDisorderResumeIntro() {
@@ -222,9 +299,7 @@ function stopDisorderResumeIntro() {
   introBgm.currentTime = 0;
   introBgm.volume = 1;
   introBgm.loop = true;
-  introBgm.play().catch(() => {
-    console.log("Introduction BGM autoplay was blocked.");
-  });
+  safePlay(introBgm);
 }
 
 function typeWriter(element, text, speed = 28, onComplete) {
@@ -350,7 +425,7 @@ function resetMessageState() {
     ghostScrollTrack.style.opacity = "0";
   }
 
-    if (scrollLayer) {
+  if (scrollLayer) {
     scrollLayer.classList.remove("active", "fade-in", "glitch-flash", "overload");
     scrollLayer.style.filter = "";
     scrollLayer.style.opacity = "1";
@@ -384,8 +459,8 @@ function resetMessageState() {
   messagePanel.style.filter = "";
 
   if (rememberScreen) {
-   rememberScreen.classList.remove("active", "fade-out");
- }
+    rememberScreen.classList.remove("active", "fade-out");
+  }
 
   if (rememberText) {
     rememberText.classList.remove("play", "fade-out", "glitch-in");
@@ -394,14 +469,14 @@ function resetMessageState() {
     rememberText.style.transform = "";
     rememberText.style.filter = "";
     rememberText.style.textShadow = "";
- }
+  }
 
- panelSfx.pause();
- panelSfx.currentTime = 0;
- panelSfx.onended = null;
+  panelSfx.pause();
+  panelSfx.currentTime = 0;
+  panelSfx.onended = null;
 
- disorderBgm.pause();
- disorderBgm.currentTime = 0;
+  disorderBgm.pause();
+  disorderBgm.currentTime = 0;
 }
 
 function startMessageSequence() {
@@ -564,10 +639,10 @@ function animateFloodScroll() {
     scrollTrack.classList.add("micro-shake");
   }
 
- if (speedProgress > 0.8) {
-   redShift += Math.random() * 6 - 3;
-   greenShift += Math.random() * 8 - 4;
- }
+  if (speedProgress > 0.8) {
+    redShift += Math.random() * 6 - 3;
+    greenShift += Math.random() * 8 - 4;
+  }
 
   if (speedProgress > 0.86) {
     const flicker = 1 + Math.random() * (0.3 + speedProgress * 0.8);
@@ -813,12 +888,13 @@ function clearMessageUI() {
 
 // ===== Start Game =====
 startBtn.addEventListener("click", () => {
- 
- if (glitchSfxTimer) {
+  unlockAllAudio();
+
+  if (glitchSfxTimer) {
     clearTimeout(glitchSfxTimer);
     glitchSfxTimer = null;
- }
-  
+  }
+
   glitchSfx.pause();
   glitchSfx.currentTime = 0;
 
@@ -835,9 +911,7 @@ startBtn.addEventListener("click", () => {
   screenIntro.classList.add("hidden");
   screenIntroduction.classList.remove("hidden");
 
-  introBgm.play().catch(() => {
-    console.log("Introduction BGM autoplay was blocked.");
-  });
+  safePlay(introBgm);
 
   void introFrame.offsetWidth;
   introFrame.classList.add("rise-in");
@@ -858,9 +932,6 @@ startBtn.addEventListener("click", () => {
     });
   }, 900);
 });
-
-const rememberScreen = document.getElementById("rememberScreen");
-const rememberText = document.getElementById("rememberText");
 
 function showRememberScreen() {
   // ===== 第一段 =====
@@ -896,9 +967,7 @@ function showRememberScreen() {
       setTimeout(() => {
         exitRememberScreen();
       }, 2500);
-
     }, 800);
-
   }, 2500);
 }
 
@@ -927,7 +996,6 @@ function exitRememberScreen() {
 workBtn.addEventListener("click", () => {
   openNameEntry();
 });
-
 
 function openNameEntry() {
   clearMessageUI();
@@ -976,22 +1044,21 @@ function validateName() {
   const value = nameInput.value.trim().toUpperCase();
 
   if (value === "CITY 04") {
-   // 播放正确音效
-   playCorrectSfx();
+    // 播放正确音效
+    playCorrectSfx();
 
-   // （可选）视觉反馈：轻微发光
-   nameDisplay.style.color = "#C8FBFF";
-   nameDisplay.style.textShadow = `
+    // （可选）视觉反馈：轻微发光
+    nameDisplay.style.color = "#C8FBFF";
+    nameDisplay.style.textShadow = `
      0 0 12px rgba(200, 251, 255, 0.6),
      0 0 24px rgba(120, 240, 255, 0.3)
    `;
 
-   // 等音效播放一小段再跳转（关键）
-   setTimeout(() => {
-     window.location.href = "main.html";
-   }, 600); // 可以调：500~800
- }
-  else {
+    // 等音效播放一小段再跳转（关键）
+    setTimeout(() => {
+      window.location.href = "main.html";
+    }, 600); // 可以调：500~800
+  } else {
     // 播放错误音效
     playWrongSfx();
 
@@ -1023,7 +1090,7 @@ function playPanelSfxOnce() {
   panelSfx.loop = false;
   panelSfx.volume = 0.6;
 
-  panelSfx.play().catch(() => {});
+  safePlay(panelSfx);
 }
 
 function monitorDisorderFadeOut() {
@@ -1046,16 +1113,16 @@ function monitorDisorderFadeOut() {
 }
 
 function playWrongSfx() {
-  wrongSfx.pause();          // 防止叠加
-  wrongSfx.currentTime = 0;  // 从头播放
+  wrongSfx.pause();
+  wrongSfx.currentTime = 0;
   wrongSfx.volume = 0.7;
 
-  wrongSfx.play().catch(() => {});
+  safePlay(wrongSfx);
 }
 
 function playCorrectSfx() {
   correctSfx.pause();
   correctSfx.currentTime = 0;
   correctSfx.volume = 0.7;
-  correctSfx.play().catch(() => {});
+  safePlay(correctSfx);
 }

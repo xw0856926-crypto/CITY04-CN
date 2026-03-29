@@ -35,17 +35,22 @@ select {
 }
 
 /* 外层只负责把整块舞台居中显示 */
-.stage-shell {
+.stage-shell,
+#viewport {
   position: fixed;
   inset: 0;
+  width: 100vw;
+  height: 100dvh;
   overflow: hidden;
   display: grid;
   place-items: center;
   background: #000;
+  touch-action: manipulation;
 }
 
 /* 内部舞台尺寸永远固定 */
-.stage {
+.stage,
+#stage {
   position: relative;
   width: 1440px;
   height: 1024px;
@@ -54,6 +59,7 @@ select {
 
   transform: scale(var(--stage-scale));
   transform-origin: center center;
+  will-change: transform;
 }
 
 /* 每一页都是同一舞台里的一个层 */
@@ -69,8 +75,6 @@ select {
 /* =========================
    开场上下分裂遮罩
    ========================= */
-
-
 
 .curtain-overlay {
   position: absolute;
@@ -882,7 +886,6 @@ select {
   }
 }
 
-
 /* 最终黑屏层 */
 .final-blackout {
   position: absolute;
@@ -1246,7 +1249,7 @@ select {
   white-space: pre-wrap;
   word-break: break-word;
   line-height: 33px;
-   font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
   font-size: 28px;
   letter-spacing: 0em;
   pointer-events: none;
@@ -1288,7 +1291,7 @@ select {
 }
 
 .remember-text {
- font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
   font-weight: 700;
   font-size: 96px;
   color: #ffffff;
@@ -1486,8 +1489,8 @@ select {
   width: 420px;
   height: 80px;
 
-  opacity: 0.01;           /* 不要完全 0，某些浏览器更稳 */
-  z-index: 5;              /* 保证在显示文字层上面 */
+  opacity: 0.01;
+  z-index: 5;
   background: transparent;
   border: none;
   outline: none;

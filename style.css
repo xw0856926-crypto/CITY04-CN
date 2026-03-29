@@ -18,6 +18,10 @@
   box-sizing: border-box;
 }
 
+:root {
+  --stage-scale: 1;
+}
+
 html,
 body {
   margin: 0;
@@ -38,9 +42,9 @@ select {
 }
 
 body {
-  position: fixed;
-  inset: 0;
-  touch-action: none;
+  position: relative;
+  inset: auto;
+  touch-action: manipulation;
 }
 
 /* ===== 舞台外层：负责居中显示 ===== */
@@ -48,7 +52,7 @@ body {
   position: fixed;
   inset: 0;
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   background: #000000;
 
@@ -65,8 +69,10 @@ body {
   height: 1024px;
   overflow: hidden;
   background: transparent;
+  transform: scale(var(--stage-scale, 1));
   transform-origin: center center;
   flex-shrink: 0;
+  will-change: transform;
 }
 
 /* ===== 背景界面图 ===== */
@@ -82,12 +88,11 @@ body {
 /* ===== 倒计时：保持你原来的 UI 不变 ===== */
 .timer {
   position: absolute;
-  /* ↓↓↓ 这两个就是“把数字挪到你红色 00:30 那块”的关键 */
-  top: 615px;     /* 先随便给一个起点 */
-  left: 829px;    /* 先随便给一个起点 */
+  top: 615px;
+  left: 829px;
 
   font-family: "DoHyeon", sans-serif;
-  font-weight: 700; /* 想细一点就 400 */
+  font-weight: 700;
   font-size: 48px;
 
   text-shadow:
@@ -96,7 +101,6 @@ body {
     0 0 16px #EA34F7,
     0 0 32px #EA34F7;
 
-  /* 默认颜色：和你 UI 的紫红接近 */
   color: #EA34F7;
   text-shadow: 0 0 12px rgba(216, 75, 255, 0.35);
 }
@@ -177,15 +181,14 @@ body {
 /* ===== Option 按钮 ===== */
 .option {
   position: absolute;
-  z-index: 6;                 /* 在背景图之上 */
-  width: 380px;               /* 先给大概值，后面微调 */
+  z-index: 6;
+  width: 380px;
   height: 160px;
   padding: 0;
   border: none;
   background: transparent;
   cursor: pointer;
 
-  /* 移除默认按钮样式 */
   appearance: none;
   -webkit-appearance: none;
 }
@@ -199,7 +202,7 @@ body {
   object-fit: fill;
   transform: scale(0.95);
   transform-origin: center;
-  pointer-events: none;       /* 点击穿透到 button */
+  pointer-events: none;
 }
 
 /* 文本层 */
@@ -209,7 +212,7 @@ body {
   padding: 6px 12px;
   color: #fff;
   font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
-  font-weight: 600;   /* ← Semibold */
+  font-weight: 600;
   font-size: 24px;
   letter-spacing: 0px;
   pointer-events: auto;
@@ -227,20 +230,20 @@ body {
   position: absolute;
   color: #fff;
   font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
-  font-weight: 600;   /* ← Semibold */
+  font-weight: 600;
   font-size: 32px;
   letter-spacing: 0px;
   pointer-events: auto;
 }
 
 .option--a .option__title {
-  left: 101px;   /* 调“保护人类”左右位置 */
-  top: 78px;    /* 调“保护人类”上下位置 */
+  left: 101px;
+  top: 78px;
 }
 
 .option--b .option__title {
-  left: 115px;   /* 调“保护资源”左右位置 */
-  top: 78px;    /* 调“保护资源”上下位置 */
+  left: 115px;
+  top: 78px;
 }
 
 /* hover 小反馈（可选） */

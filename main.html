@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
   />
   <title>Cyber-AI Task</title>
   <link rel="stylesheet" href="style.css" />
@@ -53,14 +53,52 @@
   </div>
 
   <!-- ✅ Task 音效 -->
-  <audio id="taskAudio" src="assets/audio/538791__damirst__digital-8-sec.wav" preload="auto"></audio>
-  <audio id="resultAudio" src="assets/audio/voice_clue_1.wav" preload="auto"></audio>
-  <audio id="result2Audio" src="assets/audio/voice_clue_2.wav" preload="auto"></audio>
-  <audio id="result3Audio" src="assets/audio/voice_clue_3.wav" preload="auto"></audio>
+  <audio
+    id="taskAudio"
+    src="assets/audio/538791__damirst__digital-8-sec.wav"
+    preload="auto"
+    playsinline
+    webkit-playsinline="true"
+  ></audio>
+  <audio
+    id="resultAudio"
+    src="assets/audio/voice_clue_1.wav"
+    preload="auto"
+    playsinline
+    webkit-playsinline="true"
+  ></audio>
+  <audio
+    id="result2Audio"
+    src="assets/audio/voice_clue_2.wav"
+    preload="auto"
+    playsinline
+    webkit-playsinline="true"
+  ></audio>
+  <audio
+    id="result3Audio"
+    src="assets/audio/voice_clue_3.wav"
+    preload="auto"
+    playsinline
+    webkit-playsinline="true"
+  ></audio>
 
   <!-- ✅ 第一幕 BGM -->
-  <audio id="bgmAmbient" src="assets/audio/ambient-loop.mp3" preload="auto" loop></audio>
-  <audio id="bgmGlitch" src="assets/audio/glitch.mp3" preload="auto" loop></audio>
+  <audio
+    id="bgmAmbient"
+    src="assets/audio/ambient-loop.mp3"
+    preload="auto"
+    loop
+    playsinline
+    webkit-playsinline="true"
+  ></audio>
+  <audio
+    id="bgmGlitch"
+    src="assets/audio/glitch.mp3"
+    preload="auto"
+    loop
+    playsinline
+    webkit-playsinline="true"
+  ></audio>
 
   <!-- 一次性音频解锁覆盖层 -->
   <div id="audioUnlock" class="audio-unlock hidden" role="button" aria-label="Click to enable audio">
