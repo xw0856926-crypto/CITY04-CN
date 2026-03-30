@@ -676,28 +676,44 @@ select {
   position: absolute;
   left: 50%;
   width: 900px;
-  transform: translateX(-50%);
   bottom: -520px;
+  transform: translateX(-50%) translateY(0);
   text-align: center;
   color: #f2f2f2;
-  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
   font-size: 36px;
   line-height: 1.8;
   font-weight: 600;
   letter-spacing: 0.5px;
+  will-change: transform;
 }
 
+/* 第一段：滚到屏幕中心 */
 #reportRoll.roll-up #reportContent {
-  animation: reportScrollUp 18s linear forwards;
+  animation: reportScrollToCenter 2.2s ease-out forwards;
+}
+
+/* 第二段：停留3秒后，由 JS 加上这个类，继续往上滚 */
+#reportRoll.roll-up-continue #reportContent {
+  animation: reportScrollContinue 12s linear forwards;
 }
 
 #reportContent p {
   margin: 0;
 }
 
-@keyframes reportScrollUp {
+@keyframes reportScrollToCenter {
   0% {
     transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    transform: translateX(-50%) translateY(var(--report-stop-y, -900px));
+  }
+}
+
+@keyframes reportScrollContinue {
+  0% {
+    transform: translateX(-50%) translateY(var(--report-stop-y, -900px));
   }
   100% {
     transform: translateX(-50%) translateY(-1900px);

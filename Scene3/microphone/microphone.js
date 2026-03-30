@@ -9,6 +9,7 @@ const question = document.getElementById("question");
 const stage = document.getElementById("stage");
 const glitchFlash = document.getElementById("glitchFlash");
 const endingText = document.getElementById("endingText");
+const reportContent = document.getElementById("reportContent");
 const reportRoll = document.getElementById("reportRoll");
 
 const bgmAmbient = document.getElementById("bgmAmbient");
@@ -418,9 +419,56 @@ async function handleYesPleaseSuccess() {
   }, 4300);
 
   setTimeout(() => {
-    reportRoll.classList.add("show-report");
-    reportRoll.classList.add("roll-up");
+    startReportRollSequence();
   }, 5350);
+}
+
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function getTranslateYToCenter() {
+  if (!reportContent) return -900;
+
+  const stageRect = stage.getBoundingClientRect();
+  const contentRect = reportContent.getBoundingClientRect();
+
+  const stageCenterY = stageRect.top + stageRect.height / 2;
+  const contentCenterY = contentRect.top + contentRect.height / 2;
+
+  return stageCenterY - contentCenterY;
+}
+
+async function startReportRollSequence() {
+  if (!reportRoll || !reportContent) return;
+
+  reportRoll.classList.add("show-report");
+  reportRoll.classList.remove("roll-up", "roll-up-continue");
+
+  // 先回到初始位置，确保每次计算都一致
+  reportContent.style.transform = "translateX(-50%) translateY(0)";
+  void reportContent.offsetWidth;
+
+  // 先显示，再测量真正的内容位置
+  const toCenterY = getTranslateYToCenter();
+  reportRoll.style.setProperty("--report-stop-y", `${toCenterY}px`);
+
+  // 第一段：滚到中心
+  reportRoll.classList.add("roll-up");
+
+  // 等第一段动画结束
+  await wait(2200);
+
+  // 停 3 秒
+  await wait(3000);
+
+  // 固定在第一段结束位置，避免切换动画时跳一下
+  reportRoll.classList.remove("roll-up");
+  reportContent.style.transform = `translateX(-50%) translateY(${toCenterY}px)`;
+  void reportContent.offsetWidth;
+
+  // 第二段：继续上滚
+  reportRoll.classList.add("roll-up-continue");
 }
 
 async function startSingleRecognitionSession() {
