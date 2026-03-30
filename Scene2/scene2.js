@@ -152,7 +152,7 @@ function stopTimerEffects() {
 
 startTimerEffects();
 
-/* 10秒后切到 outcome1 */
+/* 5秒后切到 outcome1 */
 setTimeout(() => {
 
 taskScene.classList.remove("active");
@@ -163,7 +163,7 @@ stopTimerEffects();
 alarmSound.currentTime = 0;
 alarmSound.play();
 
-},10000);
+},3000);
 
 let popupTimer = null;
 let closingTimer = null;
@@ -274,7 +274,7 @@ function enterTask2() {
   clearTimeout(task2Timer);
   task2Timer = setTimeout(() => {
     enterOutcome2();
-  }, 15000);
+  }, 5000);
 }
 
 function enterOutcome2() {
@@ -311,7 +311,7 @@ function enterTask3() {
   clearTimeout(task3Timer);
   task3Timer = setTimeout(() => {
     enterOutcome3();
-  }, 15000);
+  }, 3000);
 }
 
 /* 进入 outcome3 */
