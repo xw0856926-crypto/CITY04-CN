@@ -9,7 +9,7 @@ const mapHotspot = document.getElementById("mapHotspot");
 const memoryOverlay = document.getElementById("memoryOverlay");
 const memoryLine1 = document.getElementById("memoryLine1");
 const memoryLine2 = document.getElementById("memoryLine2");
-const memoryLine3 = document.getElementById("memoryLine3");
+const loadPersonalDataBtn = document.getElementById("loadPersonalDataBtn");
 
 const glitchOverlay = document.getElementById("glitchOverlay");
 
@@ -250,6 +250,12 @@ window.addEventListener("load", () => {
       showMemoryOverlay();
     });
   }
+
+  if (loadPersonalDataBtn) {
+    loadPersonalDataBtn.addEventListener("click", () => {
+      triggerGlitchAndJump();
+    });
+  }
 });
 
 window.addEventListener("resize", fitStage);
@@ -269,6 +275,10 @@ function enableMapInteraction() {
 function showMemoryOverlay() {
   memoryOverlay.classList.add("show");
 
+  memoryLine1?.classList.remove("show");
+  memoryLine2?.classList.remove("show");
+  loadPersonalDataBtn?.classList.remove("show");
+
   setTimeout(() => {
     memoryLine1?.classList.add("show");
   }, 250);
@@ -278,12 +288,8 @@ function showMemoryOverlay() {
   }, 700);
 
   setTimeout(() => {
-    memoryLine3?.classList.add("show");
+    loadPersonalDataBtn?.classList.add("show");
   }, 1150);
-
-  setTimeout(() => {
-    triggerGlitchAndJump();
-  }, 2000);
 }
 
 function triggerGlitchAndJump() {

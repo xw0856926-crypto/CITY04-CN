@@ -467,7 +467,7 @@ select {
   color: #ffffff;
   font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
   font-weight: 700;
-  font-size: 28px;
+  font-size: 30px;
   line-height: 2.45;
   letter-spacing: 0em;
 
@@ -527,4 +527,74 @@ select {
     opacity: 1;
     background: #000;
   }
+}
+
+/* ===== Load personal data 按钮：使用 outcome-frame.svg ===== */
+#loadPersonalDataBtn {
+  position: relative;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+
+  margin-top: 18px;
+  width: 360px;
+  height: 88px;
+  padding: 0;
+
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease,
+    filter 0.25s ease;
+}
+
+#loadPersonalDataBtn.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.load-btn-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.load-btn-text {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  color: #ffffff;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  white-space: nowrap;
+
+
+  pointer-events: none;
+}
+
+#loadPersonalDataBtn:hover {
+  filter: brightness(1.14) drop-shadow(0 0 10px rgba(161, 252, 254, 0.35));
+}
+
+#loadPersonalDataBtn:active {
+  transform: translateY(1px);
+}
+
+#loadPersonalDataBtn:focus-visible {
+  filter: brightness(1.2) drop-shadow(0 0 14px rgba(161, 252, 254, 0.42));
 }

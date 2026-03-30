@@ -58,6 +58,7 @@ select {
   pointer-events: none;
   opacity: 0;
   animation: bgFadeIn 1.2s ease forwards;
+  animation-delay: 2.1s;
 }
 
 .email-text {
@@ -92,28 +93,29 @@ select {
 .delay-9 { margin-bottom: 28px; }
 
 /* 一行结束后再出下一行：整体放慢版 */
-.delay-1  { animation-delay: 1.20s; animation-duration: 1.10s; }
-.delay-2  { animation-delay: 2.55s; animation-duration: 1.55s; }
-.delay-3  { animation-delay: 4.35s; animation-duration: 1.20s; }
-.delay-4  { animation-delay: 5.85s; animation-duration: 1.05s; }
-.delay-5  { animation-delay: 7.10s; animation-duration: 1.45s; }
-.delay-6  { animation-delay: 8.80s; animation-duration: 1.35s; }
-.delay-7  { animation-delay: 10.35s; animation-duration: 1.20s; }
-.delay-8  { animation-delay: 11.90s; animation-duration: 1.55s; }
-.delay-9  { animation-delay: 13.75s; animation-duration: 1.30s; }
-.delay-10 { animation-delay: 15.35s; animation-duration: 1.45s; }
+.delay-1  { animation-delay: 3.30s; animation-duration: 1.10s; }
+.delay-2  { animation-delay: 4.65s; animation-duration: 1.55s; }
+.delay-3  { animation-delay: 6.45s; animation-duration: 1.20s; }
+.delay-4  { animation-delay: 7.95s; animation-duration: 1.05s; }
+.delay-5  { animation-delay: 9.20s; animation-duration: 1.45s; }
+.delay-6  { animation-delay: 10.90s; animation-duration: 1.35s; }
+.delay-7  { animation-delay: 12.45s; animation-duration: 1.20s; }
+.delay-8  { animation-delay: 14.00s; animation-duration: 1.55s; }
+.delay-9  { animation-delay: 15.85s; animation-duration: 1.30s; }
+.delay-10 { animation-delay: 17.45s; animation-duration: 1.45s; }
+.delay-11 { animation-delay: 19.15s; animation-duration: 1.30s; }
 
 /* 按钮最后出现 */
 .btn-group {
   position: absolute;
   left: 70px;
-  top: 630px;
+  top: 645px;
   display: flex;
   flex-direction: column;
   gap: 30px;
   opacity: 0;
   animation: btnFadeIn 0.8s ease forwards;
-  animation-delay: 17.10s;
+  animation-delay: 20.50s;
 }
 
 .mail-btn {
@@ -268,4 +270,42 @@ select {
   60%  { opacity: 0.9; }
   80%  { opacity: 1; }
   100% { opacity: 1; }
+}
+
+.boot-text {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 30;
+
+  color: #ffffff;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-weight: 700;
+  font-size: 35px;
+  letter-spacing: 0em;
+  white-space: nowrap;
+
+  opacity: 0;
+  animation: bootTextShow 1.8s ease forwards;
+  animation-delay: 0.25s;
+}
+
+@keyframes bootTextShow {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.98);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  70% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.02);
+  }
 }
